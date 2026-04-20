@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clustering: The Good, The Bad and The Beautiful — ODSC AI East 2026</title>
+    <meta name="description" content="Companion site for Seth Levine's ODSC AI East 2026 talk on modern clustering workflows." />
+    <style>
+      :root {
+        --bg: #0f1117;
+        --fg: #e8e8ea;
+        --muted: #9aa0a6;
+        --accent: #ffb454;
+        --accent-dim: #6a4a1f;
+        --card: #171a22;
+        --border: #262a36;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.55;
+      }
+      main { max-width: 760px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+      header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+      .kicker {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      h1 { font-size: clamp(1.75rem, 4vw, 2.6rem); line-height: 1.15; margin: 0.5rem 0 0.75rem; }
+      .lede { color: var(--muted); font-size: 1.05rem; max-width: 58ch; }
+      h2 { font-size: 1.25rem; margin: 2.5rem 0 1rem; }
+      a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
+      a:hover { border-bottom-color: var(--accent); }
+      .cards { display: grid; gap: 0.85rem; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+      }
+      .card h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+      .card p { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.95rem; }
+      .card .links { display: flex; gap: 0.75rem; font-size: 0.9rem; }
+      .tools { color: var(--muted); font-size: 0.95rem; }
+      .tools code {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+        color: var(--fg);
+        font-size: 0.85rem;
+        margin-right: 0.2rem;
+      }
+      footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="kicker">ODSC AI East 2026 · 30-min virtual talk</div>
+        <h1>Clustering: The Good, The Bad and The Beautiful</h1>
+        <p class="lede">
+          One of the most widely used and most frequently misapplied techniques in machine learning — and how a modern workflow turns messy, high-dimensional data into useful, explainable insights.
+        </p>
+      </header>
+
+      <h2>Notebooks</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>01 · The Bad</h3>
+          <p>Why naive k-means falls apart on real embeddings: arbitrary k, spherical assumptions, noise absorbed into clusters.</p>
+          <div class="links">
+            <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_bad.ipynb">GitHub</a>
+            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_bad.ipynb">Open in Colab</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>02 · The Good</h3>
+          <p>A modern pipeline: UMAP for structure, HDBSCAN for density-based clusters with noise, BERTopic for labels.</p>
+          <div class="links">
+            <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_good.ipynb">GitHub</a>
+            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_good.ipynb">Open in Colab</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>03 · The Beautiful</h3>
+          <p>Clustering images with CLIP embeddings, EVoC, and an interactive datamapplot you can actually explore.</p>
+          <div class="links">
+            <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">GitHub</a>
+            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">Open in Colab</a>
+          </div>
+        </div>
+      </div>
+
+      <h2>Tools on display</h2>
+      <p class="tools">
+        <code>huggingface</code><code>transformers</code><code>sentence-transformers</code><code>BERTopic</code><code>UMAP</code><code>HDBSCAN</code><code>EVoC</code><code>datamapplot</code>
+      </p>
+
+      <h2>Interactive map</h2>
+      <p class="tools">The interactive datamapplot from "The Beautiful" will embed here once the notebook renders.</p>
+
+      <footer>
+        By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>
+      </footer>
+    </main>
+  </body>
+</html>
