@@ -120,8 +120,12 @@
         <video src="animation_posters.mp4" autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 10px; background: black;"></video>
       </div>
 
-      <h2>Interactive poster map</h2>
-      <p class="tools">All 5,000 movies, clustered by their posters. Hover a point to see the title. Open <a href="map.html">the full-screen version</a>.</p>
+      <h2>Poster constellation</h2>
+      <p class="tools">Each point is an actual movie poster at its UMAP coordinate. 2,000 films; zoom in to see individual titles, out for the shape of the whole catalog. Open <a href="map_posters.html">the full-screen version</a>.</p>
+      <iframe src="map_posters.html" title="Movies as poster constellation" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2>Interactive cluster map</h2>
+      <p class="tools">The same 5,000 films as colored dots grouped by HDBSCAN. Hover a point to see the title. Open <a href="map.html">the full-screen version</a>.</p>
       <iframe src="map.html" title="Movies clustered by poster" style="width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
 
       <footer>
