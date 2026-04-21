@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Clustering: The Good, The Bad and The Beautiful — ODSC AI East 2026</title>
-    <meta name="description" content="Companion site for Seth Levine's ODSC AI East 2026 talk on modern clustering workflows." />
+    <meta name="description" content="Companion site for Seth Levine's ODSC AI East 2026 talk on modern clustering workflows, using the top 5,000 movies of all time as the running dataset." />
     <style>
       :root {
         --bg: #0f1117;
@@ -57,6 +57,13 @@
         font-size: 0.85rem;
         margin-right: 0.2rem;
       }
+      .aside {
+        font-size: 0.92rem;
+        color: var(--muted);
+        border-left: 2px solid var(--accent-dim);
+        padding: 0.25rem 0 0.25rem 0.85rem;
+        margin: 1.25rem 0 0;
+      }
       footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
     </style>
   </head>
@@ -68,13 +75,16 @@
         <p class="lede">
           One of the most widely used and most frequently misapplied techniques in machine learning — and how a modern workflow turns messy, high-dimensional data into useful, explainable insights.
         </p>
+        <p class="aside">
+          The title is a nod to <em>The Bad and the Beautiful</em> (1952), so the running dataset is the <strong>top 5,000 movies</strong> by TMDB vote count — overviews for text clustering, posters for image clustering.
+        </p>
       </header>
 
       <h2>Notebooks</h2>
       <div class="cards">
         <div class="card">
           <h3>01 · The Bad</h3>
-          <p>Why naive k-means falls apart on real embeddings: arbitrary k, spherical assumptions, noise absorbed into clusters.</p>
+          <p>Failure modes that bite every clustering project: clusters from structureless data, instability across runs, raw high-dim distances, and parameter sensitivity masquerading as signal.</p>
           <div class="links">
             <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_bad.ipynb">GitHub</a>
             <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_bad.ipynb">Open in Colab</a>
@@ -82,7 +92,7 @@
         </div>
         <div class="card">
           <h3>02 · The Good</h3>
-          <p>A modern pipeline: UMAP for structure, HDBSCAN for density-based clusters with noise, BERTopic for labels.</p>
+          <p>UMAP + HDBSCAN + BERTopic on 5,000 movie overviews. Thematic clusters emerge without specifying <em>k</em>, and noise becomes a first-class citizen.</p>
           <div class="links">
             <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_good.ipynb">GitHub</a>
             <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_good.ipynb">Open in Colab</a>
@@ -90,7 +100,7 @@
         </div>
         <div class="card">
           <h3>03 · The Beautiful</h3>
-          <p>Clustering images with CLIP embeddings, EVoC, and an interactive datamapplot you can actually explore.</p>
+          <p>CLIP embeddings on movie posters, EVoC vs. HDBSCAN, and an interactive datamapplot with poster thumbnails you can actually explore.</p>
           <div class="links">
             <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">GitHub</a>
             <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">Open in Colab</a>
@@ -104,10 +114,11 @@
       </p>
 
       <h2>Interactive map</h2>
-      <p class="tools">The interactive datamapplot from "The Beautiful" will embed here once the notebook renders.</p>
+      <p class="tools">The interactive datamapplot of movie posters will embed here once the notebook renders.</p>
 
       <footer>
         By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>
+        <p style="margin-top: 0.75rem; font-size: 0.8rem;">Movie data via <a href="https://www.themoviedb.org/">TMDB</a>. This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
       </footer>
     </main>
   </body>

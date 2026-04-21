@@ -32,10 +32,10 @@ env/
 data/raw/
 data/interim/
 data/processed/
+data/posters/
+data/movies.parquet
 models/
-embeddings/
 *.pkl
-*.npy
 *.bin
 *.safetensors
 

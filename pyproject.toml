@@ -12,6 +12,7 @@ dependencies = [
     "ipywidgets>=8.1",
     "numpy>=1.26",
     "pandas>=2.2",
+    "pyarrow>=16.0",
     "scikit-learn>=1.5",
     "matplotlib>=3.9",
     "plotly>=5.22",
@@ -25,11 +26,10 @@ dependencies = [
     "evoc>=0.2",
     "pillow>=10.3",
     "torch>=2.3",
+    "requests>=2.32",
+    "tqdm>=4.66",
+    "python-dotenv>=1.0",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = []
+[tool.uv]
+package = false
