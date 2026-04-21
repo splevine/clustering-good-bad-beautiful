@@ -59,15 +59,35 @@ def generate_umap_embeddings(
 
 
 def generate_frame_data(
-    embeddings: list[np.ndarray], n_static_frames: int = 30, n_tween_frames: int = 15
-) -> list[np.ndarray]:
-    """Build the full frame sequence: static holds + tweens between embeddings."""
+    embeddings: list[np.ndarray],
+    param_values: list[Any],
+    n_static_frames: int = 30,
+    n_tween_frames: int = 15,
+    palindrome: bool = False,
+) -> tuple[list[np.ndarray], list[Any]]:
+    """Build the frame sequence: static holds + tweens between embeddings.
+
+    If `palindrome=True`, the sequence runs forward then back (mid-points
+    not duplicated), so the final frame matches the first — making a looped
+    `<video>` visually seamless.
+    """
+    if palindrome and len(embeddings) > 1:
+        emb_seq = list(embeddings) + list(reversed(embeddings[:-1]))
+        par_seq = list(param_values) + list(reversed(param_values[:-1]))
+    else:
+        emb_seq = list(embeddings)
+        par_seq = list(param_values)
+
     frames: list[np.ndarray] = []
-    for e1, e2 in zip(embeddings[:-1], embeddings[1:]):
+    frame_params: list[Any] = []
+    for i, (e1, e2) in enumerate(zip(emb_seq[:-1], emb_seq[1:])):
         frames.extend([e1] * n_static_frames)
+        frame_params.extend([par_seq[i]] * n_static_frames)
         frames.extend(list(tween(e1, e2, n_tween_frames)))
-    frames.extend([embeddings[-1]] * n_static_frames)
-    return frames
+        frame_params.extend([par_seq[i]] * n_tween_frames)
+    frames.extend([emb_seq[-1]] * n_static_frames)
+    frame_params.extend([par_seq[-1]] * n_static_frames)
+    return frames, frame_params
 
 
 def create_umap_animation(
@@ -81,15 +101,19 @@ def create_umap_animation(
     rotation_speed: float = 3.0,
     figsize: tuple[int, int] = (10, 8),
     cmap: str = "tab20",
+    palindrome: bool = False,
     **umap_params: Any,
 ) -> animation.FuncAnimation:
     """Produce a 3-D matplotlib animation sweeping one UMAP parameter.
 
     The axes rescale dynamically per-frame so the cluster geometry fills the
-    viewport as it morphs.
+    viewport as it morphs. Set `palindrome=True` for a seamless back-and-forth
+    loop (start → end → start).
     """
     embeddings = generate_umap_embeddings(data, param_name, param_values, n_components, **umap_params)
-    frame_data = generate_frame_data(embeddings, n_static_frames, n_tween_frames)
+    frame_data, frame_params = generate_frame_data(
+        embeddings, param_values, n_static_frames, n_tween_frames, palindrome=palindrome
+    )
 
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot(111, projection="3d")
@@ -116,7 +140,6 @@ def create_umap_animation(
         frame = frame_data[i]
         x, y, z = frame[:, 0], frame[:, 1], frame[:, 2]
 
-        # Rescale axes so the geometry stays filled as the parameter sweeps.
         pad = 0.1
         for setter, axis in ((ax.set_xlim, x), (ax.set_ylim, y), (ax.set_zlim, z)):
             lo, hi = axis.min(), axis.max()
@@ -125,9 +148,7 @@ def create_umap_animation(
 
         scatter._offsets3d = (x, y, z)
         ax.view_init(elev=10.0, azim=(i * rotation_speed) % 360)
-
-        param_index = min(i // (n_static_frames + n_tween_frames), len(param_values) - 1)
-        title.set_text(f"UMAP · {param_name} = {param_values[param_index]}")
+        title.set_text(f"UMAP · {param_name} = {frame_params[i]}")
         return (scatter,)
 
     anim = animation.FuncAnimation(
