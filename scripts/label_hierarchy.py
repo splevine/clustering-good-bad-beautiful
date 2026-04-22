@@ -244,6 +244,12 @@ def build_interactive(movies, X, layer_labels, args):
         cluster_layer_colormaps=True,
         histogram_data=movies["release_year"].fillna(0).astype(int),
         histogram_n_bins=30,
+        histogram_settings={
+            "histogram_title": "Release year",
+            "histogram_bin_fill_color": "#ffb454",
+            "histogram_bin_selected_fill_color": "#ffb454",
+            "histogram_bin_unselected_fill_color": "#3a3f4d",
+        },
         darkmode=True,
         on_click="window.open(`https://www.themoviedb.org/movie/{tmdb_id}`)",
         title="5,000 movies · thematic hierarchy",
