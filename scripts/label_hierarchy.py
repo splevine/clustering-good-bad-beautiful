@@ -253,7 +253,7 @@ def build_interactive(movies, X, layer_labels, args):
         darkmode=True,
         on_click="window.open(`https://www.themoviedb.org/movie/{tmdb_id}`)",
         title="5,000 movies · thematic hierarchy",
-        sub_title="5 zoom levels, labels by Claude. Hover for details, click to open on TMDB.",
+        sub_title="Hover for details, click to open on TMDB. Labels by Claude.",
     )
     plot.save(str(OUT_PATH))
     print(f"wrote {OUT_PATH} ({OUT_PATH.stat().st_size // 1024} KB)")
