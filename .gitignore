@@ -34,6 +34,7 @@ data/interim/
 data/processed/
 data/posters/
 data/movies.parquet
+data/cluster_metadata.json
 embeddings/
 models/
 *.pkl
