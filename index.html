@@ -128,9 +128,44 @@
       <p class="tools">Each point is an actual movie poster at its UMAP coordinate. 2,000 films; zoom in to see individual titles, out for the shape of the whole catalog. Open <a href="map_posters.html">the full-screen version</a>.</p>
       <iframe src="map_posters.html" title="Movies as poster constellation" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
 
-      <h2>Thematic hierarchy · 5 zoom levels</h2>
-      <p class="tools">5,000 films clustered on their overview text, with 5 BERTopic-reduced hierarchy levels — zoom out for 5 coarse themes, zoom in for 47 fine-grained ones. Labels by Claude. Search titles, filter by release year, click any point to open it on TMDB. Open <a href="map.html">the full-screen version</a>.</p>
-      <iframe src="map.html" title="Thematic movie hierarchy" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
+      <h2>Before LLMs vs. with LLMs</h2>
+      <p class="tools">Same clusters, same geometry, same hierarchy — only the labels differ. On the left: raw c-TF-IDF keywords (the way we used to label clusters). On the right: Claude labeling on the top keywords + representative movies. The pipeline hasn't gotten smarter; the labeling layer has.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+        <div>
+          <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 0.35rem;">Before LLMs · c-TF-IDF keywords</div>
+          <iframe src="map_classic.html" title="Classic keyword labels" style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
+        </div>
+        <div>
+          <div style="color: var(--accent); font-size: 0.9rem; margin-bottom: 0.35rem;">With LLMs · Claude labels</div>
+          <iframe src="map.html" title="Claude-labeled hierarchy" style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
+        </div>
+      </div>
+      <p class="tools">Both support search by movie title, release-year histogram filter, topic tree navigation, and click-through to TMDB. Open full-screen: <a href="map_classic.html">keyword version</a> · <a href="map.html">LLM version</a>.</p>
+
+      <h2>Label quality at a glance</h2>
+      <div class="card" style="overflow-x: auto; padding: 0;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
+          <thead>
+            <tr style="color: var(--accent); text-align: left;">
+              <th style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border);">c-TF-IDF keywords</th>
+              <th style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border);">Claude label</th>
+              <th style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); color: var(--muted);">Example films</th>
+            </tr>
+          </thead>
+          <tbody style="color: var(--fg);">
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">planet · earth · space · alien</td><td style="padding: 0.5rem 0.8rem;">Space sci-fi</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Interstellar, Avatar, The Martian</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">queen · prince · princess · king</td><td style="padding: 0.5rem 0.8rem;">Royalty &amp; fairy tales</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Frozen, Wonder Woman, Aquaman</td></tr>
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">heist · bank · drug · police</td><td style="padding: 0.5rem 0.8rem;">Neo-noir crime</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Drive, Scarface, Taxi Driver</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">halloween · michael · krueger · freddy</td><td style="padding: 0.5rem 0.8rem;">Slasher horror</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Scream, The Conjuring, Ghostbusters</td></tr>
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">batman · gotham · gotham city · bruce</td><td style="padding: 0.5rem 0.8rem;">Batman saga</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">The Dark Knight, Batman Begins</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">sonic · super · captain america · stark</td><td style="padding: 0.5rem 0.8rem;">Marvel superheroes</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Avengers: Endgame, Iron Man, Deadpool</td></tr>
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">priest · church · nun · exorcism</td><td style="padding: 0.5rem 0.8rem;">Religious horror</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">The Exorcist, The Nun, Constantine</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">dinosaurs · isla · live · park</td><td style="padding: 0.5rem 0.8rem;">Jurassic dinosaurs</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Jurassic Park, Jurassic World</td></tr>
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">vampire · dracula · vampires · edward</td><td style="padding: 0.5rem 0.8rem;">Vampire romance</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Twilight, New Moon, Eclipse</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">ship · shark · captain · sea · pirate</td><td style="padding: 0.5rem 0.8rem;">Pirates &amp; the sea</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Pirates of the Caribbean, Finding Nemo</td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <footer>
         By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>

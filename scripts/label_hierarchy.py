@@ -253,8 +253,23 @@ def build_interactive(movies, X, layer_labels, args):
     print(f"wrote {OUT_PATH} ({OUT_PATH.stat().st_size // 1024} KB)")
 
 
+def generate_keyword_labels(movies, topics, topic_terms, layers, layer_sizes, n_terms=4):
+    """Old-school c-TF-IDF labels: top terms joined with ' · '. No LLM."""
+    layer_labels = []
+    for lvl_i, doc_labels in enumerate(layers):
+        cluster_ids = sorted(c for c in set(doc_labels) if c != -1)
+        labels_this_layer = {-1: "Unlabelled"}
+        for cid in cluster_ids:
+            terms, _ = cluster_repr(movies, doc_labels, cid, topics, topic_terms)
+            labels_this_layer[cid] = " · ".join(terms[:n_terms]) or "Unlabelled"
+        layer_labels.append(np.array([labels_this_layer[c] for c in doc_labels]))
+    return layer_labels
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--classic", action="store_true",
+                    help="Use raw c-TF-IDF keyword labels instead of Claude. Writes to map_classic.html.")
     ap.add_argument("--filter", default="release_year", help="(reserved for future use)")
     args = ap.parse_args()
 
@@ -263,8 +278,14 @@ def main():
 
     topics, topic_model, topic_emb, topic_terms = fit_bertopic(overviews, X)
     layers = build_hierarchy(topics, topic_emb, LAYER_SIZES)
-    layer_labels = generate_labels(movies, topics, topic_terms, layers, LAYER_SIZES)
-    # datamapplot wants finest-first; our layers are [80, 40, 20, 10, 5] which is already fine->coarse
+
+    global OUT_PATH
+    if args.classic:
+        layer_labels = generate_keyword_labels(movies, topics, topic_terms, layers, LAYER_SIZES)
+        OUT_PATH = REPO / "map_classic.html"
+        print(f"using classic c-TF-IDF keyword labels → {OUT_PATH.name}")
+    else:
+        layer_labels = generate_labels(movies, topics, topic_terms, layers, LAYER_SIZES)
     build_interactive(movies, X, layer_labels, args)
 
 
