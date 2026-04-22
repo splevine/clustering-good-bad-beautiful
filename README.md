@@ -10,8 +10,8 @@ The talk title nods to *The Bad and the Beautiful* (1952), so the running datase
 
 | Notebook | Theme | Run it |
 | --- | --- | --- |
-| [`notebooks/01_the_bad.ipynb`](notebooks/01_the_bad.ipynb) | Failure modes that bite every clustering project | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_bad.ipynb) |
-| [`notebooks/02_the_good.ipynb`](notebooks/02_the_good.ipynb) | A modern pipeline: UMAP → HDBSCAN → BERTopic on movie overviews | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_good.ipynb) |
+| [`notebooks/01_the_good.ipynb`](notebooks/01_the_good.ipynb) | A modern pipeline: UMAP → HDBSCAN → BERTopic on movie overviews | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_good.ipynb) |
+| [`notebooks/02_the_bad.ipynb`](notebooks/02_the_bad.ipynb) | Failure modes that would have bitten each stage of the pipeline above | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_bad.ipynb) |
 | [`notebooks/03_the_beautiful.ipynb`](notebooks/03_the_beautiful.ipynb) | CLIP + EVoC on posters, with an interactive datamapplot of thumbnails | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb) |
 
 ## Tools on display
