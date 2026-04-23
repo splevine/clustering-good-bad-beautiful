@@ -60,19 +60,69 @@ def main() -> int:
     n_clusters = len(set(chosen)) - (1 if "Unlabelled" in chosen else 0)
     print(f"rendering static plot: layer {args.layer_idx}, {n_clusters} named clusters")
 
+    # Fonts: try Inter (Google), fall back to DejaVu Sans.
+    font_family = "Inter"
+
     fig, _ = datamapplot.create_plot(
         umap_viz,
         chosen,
         figsize=tuple(args.figsize),
         darkmode=True,
-        label_over_points=True,
-        dynamic_label_size=True,
-        label_font_size=9,
         use_medoids=True,
-        title="Top movies · thematic clusters",
-        sub_title=f"BERTopic on sentence embeddings, {n_clusters} themes labelled by Claude",
+        dynamic_label_size=True,
+        dynamic_label_size_scaling_factor=0.9,
+        font_family=font_family,
+        label_wrap_width=14,
+        label_linespacing=1.05,
+        label_margin_factor=1.8,
+        min_font_size=5,
+        max_font_size=22,
+        min_font_weight=300,
+        max_font_weight=800,
+        color_label_arrows=True,
+        arrowprops={
+            "arrowstyle": "-|>",
+            "connectionstyle": "arc3,rad=0.08",
+            "linewidth": 0.8,
+            "mutation_scale": 8,
+            "alpha": 0.55,
+        },
+        point_size=2,
+        alpha=0.55,
+        add_glow=True,
+        glow_keywords={"kernel": "gaussian", "kernel_bandwidth": 0.35, "approx_patch_size": 64},
+        palette_hue_shift=10,
+        palette_hue_radius_dependence=1.2,
+        noise_color="#2a2d36",
+        highlight_labels=[
+            "Superheroes", "Space sci-fi", "World War & combat", "Christmas films",
+            "Westerns & the frontier", "Heists, spies & capers", "Zombies & plagues",
+            "Music biopics & rock",
+        ],
+        highlight_label_keywords={
+            "fontweight": "bold",
+            "fontsize": 14,
+            "bbox": {
+                "boxstyle": "round,pad=0.35",
+                "facecolor": "#171a22",
+                "edgecolor": "#ffb454",
+                "linewidth": 1.0,
+                "alpha": 0.85,
+            },
+        },
+        title="100,000 films · thematic clusters",
+        sub_title=f"BERTopic on MiniLM overviews · {n_clusters} themes labelled by Claude",
+        title_keywords={
+            "fontfamily": font_family, "fontsize": 28, "fontweight": "bold",
+            "color": "#ffb454",
+        },
+        sub_title_keywords={
+            "fontfamily": font_family, "fontsize": 14, "color": "#9aa0a6",
+            "style": "italic",
+        },
     )
-    fig.savefig(args.out, dpi=args.dpi, bbox_inches="tight", facecolor="#0f1117")
+    fig.patch.set_facecolor("#0f1117")
+    fig.savefig(args.out, dpi=args.dpi, bbox_inches="tight", facecolor="#0f1117", pad_inches=0.25)
     plt.close(fig)
     print(f"wrote {args.out} ({args.out.stat().st_size // 1024} KB)")
     return 0

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Extras · Clustering: The Good, The Bad and The Beautiful</title>
+    <meta name="description" content="BERTopic's full visualization suite and supporting artifacts for Seth Levine's ODSC AI East 2026 talk." />
+    <style>
+      :root {
+        --bg: #0f1117;
+        --fg: #e8e8ea;
+        --muted: #9aa0a6;
+        --accent: #ffb454;
+        --accent-dim: #6a4a1f;
+        --card: #171a22;
+        --border: #262a36;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.55;
+      }
+      main { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+      header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+      .kicker {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; margin: 0.5rem 0 0.75rem; }
+      .lede { color: var(--muted); font-size: 1rem; max-width: 60ch; }
+      h2 {
+        font-size: 1.3rem;
+        margin: 2.5rem 0 0.75rem;
+        border-top: 1px solid var(--border);
+        padding-top: 1.5rem;
+      }
+      h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2rem; }
+      a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
+      a:hover { border-bottom-color: var(--accent); }
+      .tools { color: var(--muted); font-size: 0.95rem; }
+      .tools code {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+        color: var(--fg);
+        font-size: 0.85rem;
+      }
+      iframe { display: block; }
+      footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="kicker">Extras · supplementary visuals</div>
+        <h1>BERTopic's full visualization suite</h1>
+        <p class="lede">
+          Every chart BERTopic produces from the 100K fit. Not part of the talk narrative — kept here for anyone who wants to explore the topic model directly.
+        </p>
+        <p class="tools" style="margin-top: 0.75rem;"><a href="index.html">← back to the main page</a></p>
+      </header>
+
+      <h2><code>visualize_topics_over_time</code> · a century of thematic evolution</h2>
+      <p class="tools">Topic prevalence across decades. Superheroes explode post-2008, Westerns fade after 1975, space sci-fi reinvents itself every decade.</p>
+      <iframe src="topics_100k_over_time.html" title="Topics over time at 100K" style="width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2><code>visualize_heatmap</code> · topic similarity matrix</h2>
+      <p class="tools">Cosine similarity between every pair of topic centroids. Dark stripes are tight thematic families; light regions are orphans.</p>
+      <iframe src="topics_100k_heatmap.html" title="Topic heatmap" style="width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2><code>visualize_hierarchy</code> · dendrogram of topic merges</h2>
+      <p class="tools">Agglomerative-clustering tree over topic embeddings. Shows which topics collapse together first as you reduce resolution.</p>
+      <iframe src="topics_100k_hierarchy.html" title="Topic dendrogram" style="width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2><code>visualize_barchart</code> · top c-TF-IDF terms per topic</h2>
+      <p class="tools">The "before LLMs" representation — grids of the most distinctive terms per topic. Useful for sanity-checking Claude's labels against the raw signal.</p>
+      <iframe src="topics_100k_barchart.html" title="Topic barchart" style="width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2><code>visualize_topics</code> · all 253 topics as a scatter</h2>
+      <p class="tools">Topics as 2D points sized by document count. Hover for the top-5 c-TF-IDF terms. Open <a href="topics_100k_scatter.html">full-screen</a> (heavy embed).</p>
+      <iframe src="topics_100k_scatter.html" title="Topic scatter" style="width: 100%; height: 640px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2>5K topics over time</h2>
+      <p class="tools">The smaller-scale version of the temporal chart. Useful as a side-by-side comparison with the 100K version.</p>
+      <iframe src="topics_over_time.html" title="Topics over time (5K)" style="width: 100%; height: 540px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <footer>
+        By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>
+        <p style="margin-top: 0.75rem; font-size: 0.8rem;">Movie data via <a href="https://www.themoviedb.org/">TMDB</a>. This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
+      </footer>
+    </main>
+  </body>
+</html>

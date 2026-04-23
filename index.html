@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Clustering: The Good, The Bad and The Beautiful — ODSC AI East 2026</title>
-    <meta name="description" content="Companion site for Seth Levine's ODSC AI East 2026 talk on modern clustering workflows, using the top 5,000 movies of all time as the running dataset." />
+    <meta name="description" content="Companion site for Seth Levine's ODSC AI East 2026 talk on modern clustering workflows, using TMDB films as the running dataset." />
     <style>
       :root {
         --bg: #0f1117;
@@ -23,7 +23,7 @@
         font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         line-height: 1.55;
       }
-      main { max-width: 760px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+      main { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
       header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
       .kicker {
         color: var(--accent);
@@ -34,10 +34,26 @@
       }
       h1 { font-size: clamp(1.75rem, 4vw, 2.6rem); line-height: 1.15; margin: 0.5rem 0 0.75rem; }
       .lede { color: var(--muted); font-size: 1.05rem; max-width: 58ch; }
-      h2 { font-size: 1.25rem; margin: 2.5rem 0 1rem; }
+      h2 {
+        font-size: 1.45rem;
+        margin: 3rem 0 1rem;
+        border-top: 1px solid var(--border);
+        padding-top: 1.75rem;
+      }
+      h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2.5rem; }
+      h3 { font-size: 1.08rem; margin: 2rem 0 0.75rem; color: var(--fg); }
       a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
       a:hover { border-bottom-color: var(--accent); }
-      .cards { display: grid; gap: 0.85rem; }
+      .act-label {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.72rem;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+      .cards { display: grid; gap: 0.85rem; grid-template-columns: repeat(3, 1fr); }
       .card {
         background: var(--card);
         border: 1px solid var(--border);
@@ -45,8 +61,8 @@
         padding: 1rem 1.1rem;
       }
       .card h3 { margin: 0 0 0.25rem; font-size: 1rem; }
-      .card p { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.95rem; }
-      .card .links { display: flex; gap: 0.75rem; font-size: 0.9rem; }
+      .card p { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.9rem; }
+      .card .links { display: flex; gap: 0.75rem; font-size: 0.85rem; }
       .tools { color: var(--muted); font-size: 0.95rem; }
       .tools code {
         background: var(--card);
@@ -64,7 +80,48 @@
         padding: 0.25rem 0 0.25rem 0.85rem;
         margin: 1.25rem 0 0;
       }
-      footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
+      /* Pipeline flowchart */
+      .pipeline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        align-items: center;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 0.85rem;
+        margin: 1rem 0 0;
+      }
+      .pipeline .stage {
+        flex: 1 1 auto;
+        padding: 0.55rem 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #1c1f29;
+        color: var(--fg);
+        font-size: 0.87rem;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .pipeline .stage.highlight {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(255, 180, 84, 0.08);
+      }
+      .pipeline .arrow {
+        color: var(--accent);
+        font-size: 1rem;
+        line-height: 1;
+        opacity: 0.7;
+      }
+      iframe, video { display: block; }
+      footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+      @media (max-width: 640px) {
+        .cards { grid-template-columns: 1fr; }
+        .pipeline .stage { flex-basis: 100%; }
+        .pipeline .arrow { transform: rotate(90deg); }
+      }
     </style>
   </head>
   <body>
@@ -76,7 +133,7 @@
           One of the most widely used and most frequently misapplied techniques in machine learning — and how a modern workflow turns messy, high-dimensional data into useful, explainable insights.
         </p>
         <p class="aside">
-          The title is a nod to <em>The Bad and the Beautiful</em> (1952), so the running dataset is the <strong>top 5,000 movies</strong> by TMDB vote count — overviews for text clustering, posters for image clustering.
+          Running dataset: the <strong>top 5,000 movies</strong> by TMDB vote count (and a 100K scale-up at the end). Overviews for text clustering, posters for image clustering. Title nods to <em>The Bad and the Beautiful</em> (1952).
         </p>
       </header>
 
@@ -84,44 +141,63 @@
       <div class="cards">
         <div class="card">
           <h3>01 · The Good</h3>
-          <p>UMAP + HDBSCAN + BERTopic on 5,000 movie overviews. Thematic clusters emerge without specifying <em>k</em>, and noise becomes a first-class citizen.</p>
+          <p>UMAP + HDBSCAN + BERTopic on 5,000 movie overviews.</p>
           <div class="links">
             <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_good.ipynb">GitHub</a>
-            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_good.ipynb">Open in Colab</a>
+            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/01_the_good.ipynb">Colab</a>
           </div>
         </div>
         <div class="card">
           <h3>02 · The Bad</h3>
-          <p>Failure modes that would have bitten each stage of the pipeline above: clusters from structureless data, instability across runs, raw high-dim distances, and parameter sensitivity masquerading as signal.</p>
+          <p>What would have gone wrong at each pipeline stage.</p>
           <div class="links">
             <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_bad.ipynb">GitHub</a>
-            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_bad.ipynb">Open in Colab</a>
+            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/02_the_bad.ipynb">Colab</a>
           </div>
         </div>
         <div class="card">
           <h3>03 · The Beautiful</h3>
-          <p>CLIP embeddings on movie posters, EVoC vs. HDBSCAN, and an interactive datamapplot with poster thumbnails you can actually explore.</p>
+          <p>CLIP + EVoC on posters, interactive datamapplot + 3D cosmos.</p>
           <div class="links">
             <a href="https://github.com/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">GitHub</a>
-            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">Open in Colab</a>
+            <a href="https://colab.research.google.com/github/splevine/clustering-good-bad-beautiful/blob/main/notebooks/03_the_beautiful.ipynb">Colab</a>
           </div>
         </div>
       </div>
 
-      <h2>Tools on display</h2>
-      <p class="tools">
-        <code>huggingface</code><code>transformers</code><code>sentence-transformers</code><code>BERTopic</code><code>UMAP</code><code>HDBSCAN</code><code>EVoC</code><code>datamapplot</code>
+      <p class="tools" style="margin-top: 1.25rem;">
+        Stack: <code>huggingface</code><code>transformers</code><code>sentence-transformers</code><code>BERTopic</code><code>UMAP</code><code>HDBSCAN</code><code>EVoC</code><code>datamapplot</code><code>Claude (Anthropic)</code>
       </p>
 
-      <h2>UMAP's two most impactful parameters</h2>
+      <h2>The unsupervised-learning pipeline</h2>
+      <p class="tools">Every visual on this page sits on one of these stages. The whole talk walks this diagram, left to right, then scales it up.</p>
+      <div class="pipeline" aria-label="Unsupervised learning pipeline">
+        <span class="stage">raw data</span>
+        <span class="arrow">→</span>
+        <span class="stage">encoding</span>
+        <span class="arrow">→</span>
+        <span class="stage">embeddings</span>
+        <span class="arrow">→</span>
+        <span class="stage highlight">dim reduction</span>
+        <span class="arrow">→</span>
+        <span class="stage highlight">clustering</span>
+        <span class="arrow">→</span>
+        <span class="stage">clusters</span>
+        <span class="arrow">→</span>
+        <span class="stage highlight">labels</span>
+        <span class="arrow">→</span>
+        <span class="stage">actions</span>
+      </div>
+
+      <h2><span class="act-label">UMAP stage · the knobs that matter</span>Two most impactful parameters</h2>
       <p class="tools">
-        <strong><code>n_neighbors</code></strong> — balances local versus global structure by constraining the size of the local neighborhood UMAP looks at when learning the manifold. Low values concentrate on fine-grained local structure; high values emphasize the global picture.
+        <strong><code>n_neighbors</code></strong> — balances local vs. global structure by constraining the size of the local neighborhood UMAP looks at when learning the manifold.
         <br>
-        <strong><code>min_dist</code></strong> — the minimum distance UMAP is allowed to place points apart in the reduced space. Low values pack points tightly for clearer cluster shapes; high values spread points evenly for a broader topological view.
+        <strong><code>min_dist</code></strong> — the minimum distance UMAP is allowed to place points apart in the reduced space.
         <br>
-        <span style="font-size: 0.85em;">See the <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP docs</a> for the full treatment.</span>
+        <span style="font-size: 0.85em;">Canonical definitions from the <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP docs</a>.</span>
       </p>
-      <p class="tools">Same 2,000 movies, looped back and forth so you can read the effect in both directions. Top row: <code>n_neighbors</code> from 2 (most local) to 60 (more global). Bottom row: <code>min_dist</code> from 0.0 (tight clusters) to 0.8 (evenly spread). Left column: overview embeddings. Right column: poster embeddings. Colored by primary genre.</p>
+      <p class="tools">2,000 movies, looped back and forth, colored by primary genre. Top row: <code>n_neighbors</code> 2 (most local) → 60 (more global). Bottom row: <code>min_dist</code> 0.0 (tight clusters) → 0.8 (evenly spread). Left: overview embeddings. Right: poster embeddings.</p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
         <div>
           <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;">overviews · <code>n_neighbors</code></div>
@@ -141,56 +217,45 @@
         </div>
       </div>
 
-      <h2>Emerging and fading themes, 1902 – 2026</h2>
-      <p class="tools">BERTopic's <code>topics_over_time</code> tracking when each cluster rises or falls across a century of cinema — the 5,000-top-voted-films version. Labels by Claude. See the 100K scale-up section below for the high-resolution temporal picture.</p>
-      <iframe src="topics_over_time.html" title="Topics over time (5K)" style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
-
-      <h2>Scaled up to 100,000 films</h2>
-      <p class="tools">
-        The same pipeline, 20× the data. Fetched by partitioning TMDB's <code>/discover</code> queries by <code>primary_release_year</code> to bypass the 500-page cap, giving ~10,000 films per decade for 1960s–2010s and tapering at the tails. BERTopic found <strong>253 natural topics</strong> with 60% noise (long-tail films) on 97,878 substantive overviews. Coarse hierarchy layers (5 → 15 → 40) hand-labelled; finer layers fall back to c-TF-IDF keywords.
-      </p>
-
-      <h3 style="margin-top: 1.5rem;">Interactive hierarchy · 100K</h3>
-      <p class="tools">Zoom out for 5 broad themes, in for 250 specific ones. Search, release-year histogram, click-through all still work.</p>
-      <iframe src="map_100k.html" title="100K thematic hierarchy" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
-
-      <h3 style="margin-top: 1.5rem;">Slide-ready static map</h3>
-      <p class="tools">High-resolution PNG for decks — 40 named clusters with medoid-positioned labels. Use as-is in slides; no Javascript or embedding required. <a href="map_static_100k.png">Download full-resolution</a>.</p>
-      <a href="map_static_100k.png"><img src="map_static_100k.png" alt="Static datamapplot at 100K" style="width: 100%; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;" /></a>
-
-      <h3 style="margin-top: 1.5rem;">BERTopic's built-in visualization suite</h3>
-      <p class="tools">The native charts that BERTopic produces from the same fit — each surfaces a different view of the 253 topics.</p>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-        <div>
-          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>topics_over_time</code> · decade-by-decade evolution</div>
-          <iframe src="topics_100k_over_time.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
-        </div>
-        <div>
-          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>visualize_heatmap</code> · topic similarity matrix</div>
-          <iframe src="topics_100k_heatmap.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
-        </div>
-        <div>
-          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>visualize_hierarchy</code> · dendrogram of topic merges</div>
-          <iframe src="topics_100k_hierarchy.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
-        </div>
-        <div>
-          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>visualize_barchart</code> · top c-TF-IDF terms per topic</div>
-          <iframe src="topics_100k_barchart.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
-        </div>
-      </div>
-      <p class="tools" style="margin-top: 0.75rem;">Also rendered: <a href="topics_100k_scatter.html">topic scatter</a> (Plotly 2D view of all 253 topics sized by frequency).</p>
-
-      <h2>3D poster cosmos</h2>
-      <p class="tools">1,000 films in 3D, auto-rotating until you grab the camera. Orbit, pan, zoom, hover for the title. Loads posters from TMDB's CDN on first view. Open <a href="cosmos.html">the full-screen version</a>.</p>
+      <h2><span class="act-label">Encoding stage · swap the encoder</span>The 3D poster cosmos</h2>
+      <p class="tools">Same pipeline, CLIP instead of MiniLM. 1,000 films in 3D, auto-rotating until you grab the camera. Orbit, pan, zoom, hover for the title. Open <a href="cosmos.html">full-screen</a>.</p>
       <iframe src="cosmos.html" title="3D poster cosmos" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
 
-      <h2>Poster constellation (2D)</h2>
-      <p class="tools">Each point is an actual movie poster at its UMAP coordinate. 2,000 films; zoom in to see individual titles, out for the shape of the whole catalog. Open <a href="map_posters.html">the full-screen version</a>.</p>
+      <h2><span class="act-label">Encoding stage · keep the encoder, look at the data</span>Poster constellation · 2D</h2>
+      <p class="tools">Each point is an actual movie poster at its UMAP coordinate. 2,000 films; zoom in to read individual titles, out for the shape of the catalog. Open <a href="map_posters.html">full-screen</a>.</p>
       <iframe src="map_posters.html" title="Movies as poster constellation" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
 
-      <h2>Thematic hierarchy · 5 zoom levels</h2>
-      <p class="tools">5,000 films clustered on their overview text, 5 BERTopic-reduced hierarchy levels. Search titles, filter by release year, click any point to open it on TMDB. Labels by Claude. Open <a href="map.html">the full-screen version</a>.</p>
-      <iframe src="map.html" title="Thematic movie hierarchy" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
+      <h2><span class="act-label">Labels stage · the pivot</span>5,000 movies · interactive thematic hierarchy</h2>
+      <p class="tools">BERTopic → agglomerative hierarchy at 5 levels. Zoom out for 5 coarse themes, in for 47 specific ones. Search titles, filter by release year, click any point to open on TMDB. Labels by Claude. Open <a href="map.html">full-screen</a>.</p>
+      <iframe src="map.html" title="5K thematic hierarchy" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
+
+      <h3>Labels, before and after LLMs</h3>
+      <p class="tools">Same clusters, two labeling layers. Left: c-TF-IDF (what BERTopic shipped as defaults for years). Right: Claude on the top keywords + representative films. Nothing in the pipeline got smarter; the labeling layer did.</p>
+      <div class="card" style="overflow-x: auto; padding: 0;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
+          <thead>
+            <tr style="color: var(--accent); text-align: left;">
+              <th style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border);">c-TF-IDF keywords</th>
+              <th style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border);">Claude label</th>
+              <th style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); color: var(--muted);">Example films</th>
+            </tr>
+          </thead>
+          <tbody style="color: var(--fg);">
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">planet · earth · space · alien</td><td style="padding: 0.5rem 0.8rem;">Space sci-fi</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Interstellar, Avatar, The Martian</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">queen · prince · princess · king</td><td style="padding: 0.5rem 0.8rem;">Royalty &amp; fairy tales</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Frozen, Wonder Woman, Aquaman</td></tr>
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">halloween · michael · krueger · freddy</td><td style="padding: 0.5rem 0.8rem;">Slasher horror</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Scream, The Conjuring, Ghostbusters</td></tr>
+            <tr style="background: rgba(255,255,255,0.02);"><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">heist · bank · drug · police</td><td style="padding: 0.5rem 0.8rem;">Neo-noir crime</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Drive, Scarface, Taxi Driver</td></tr>
+            <tr><td style="padding: 0.5rem 0.8rem; color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.85rem;">vampire · dracula · vampires · edward</td><td style="padding: 0.5rem 0.8rem;">Vampire romance</td><td style="padding: 0.5rem 0.8rem; color: var(--muted);">Twilight, New Moon, Eclipse</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2><span class="act-label">Scale · what changes at 20×</span>100,000 films</h2>
+      <p class="tools">Same pipeline, 20× the data. Fetched by partitioning TMDB queries by <code>primary_release_year</code> to bypass the 500-page global cap — ~10K films per decade for 1960s–2010s. 253 natural BERTopic topics, 60% noise. Coarse hierarchy labelled by Claude; finer layers fall back to c-TF-IDF keywords.</p>
+      <a href="map_static_100k.png"><img src="map_static_100k.png" alt="Static datamapplot of 100K films" style="width: 100%; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;" /></a>
+      <p class="tools" style="margin-top: 0.85rem;">
+        Explore: <a href="map_100k.html">interactive 100K map</a> (same capabilities as the 5K one — search, release-year filter, TMDB click-through). Supplementary: <a href="topics_100k_over_time.html">topics over time (100K)</a>, plus the full <a href="extras.html">BERTopic visualization suite</a> on the extras page.
+      </p>
 
       <footer>
         By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>
