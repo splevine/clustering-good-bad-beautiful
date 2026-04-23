@@ -109,7 +109,7 @@ def main():
             n_components=3,
             n_static_frames=15,
             n_tween_frames=10,
-            rotation_speed=2.0,
+            rotations_per_cycle=1.0,
             palindrome=True,
             metric="cosine",
             random_state=0,

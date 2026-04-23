@@ -100,22 +100,32 @@ def create_umap_animation(
     n_components: int = 3,
     n_static_frames: int = 20,
     n_tween_frames: int = 10,
-    rotation_speed: float = 3.0,
+    rotations_per_cycle: float = 1.0,
     figsize: tuple[int, int] = (10, 8),
     cmap: str = "tab20",
     palindrome: bool = False,
+    # Legacy param kept for backwards-compat (ignored if rotations_per_cycle is provided).
+    rotation_speed: float | None = None,
     **umap_params: Any,
 ) -> animation.FuncAnimation:
     """Produce a 3-D matplotlib animation sweeping one UMAP parameter.
 
     The axes rescale dynamically per-frame so the cluster geometry fills the
-    viewport as it morphs. Set `palindrome=True` for a seamless back-and-forth
+    viewport as it morphs. Set `palindrome=True` for a back-and-forth content
     loop (start → end → start).
+
+    ``rotations_per_cycle`` (default 1.0) controls how many full camera
+    rotations happen across the full frame sequence. Tuned so the final
+    frame lands at the same camera angle as the first — making ``<video loop>``
+    visually seamless.
     """
     embeddings = generate_umap_embeddings(data, param_name, param_values, n_components, **umap_params)
     frame_data, frame_params = generate_frame_data(
         embeddings, param_values, n_static_frames, n_tween_frames, palindrome=palindrome
     )
+
+    n_frames = len(frame_data)
+    rotation_per_frame = 360.0 * rotations_per_cycle / n_frames
 
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot(111, projection="3d")
@@ -149,7 +159,7 @@ def create_umap_animation(
             setter(lo - pad * span, hi + pad * span)
 
         scatter._offsets3d = (x, y, z)
-        ax.view_init(elev=10.0, azim=(i * rotation_speed) % 360)
+        ax.view_init(elev=10.0, azim=(i * rotation_per_frame) % 360)
         title.set_text(f"UMAP · {param_name} = {frame_params[i]}")
         return (scatter,)
 

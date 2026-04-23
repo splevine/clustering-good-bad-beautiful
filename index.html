@@ -113,8 +113,13 @@
         <code>huggingface</code><code>transformers</code><code>sentence-transformers</code><code>BERTopic</code><code>UMAP</code><code>HDBSCAN</code><code>EVoC</code><code>datamapplot</code>
       </p>
 
-      <h2>UMAP's two knobs · <code>n_neighbors</code> and <code>min_dist</code></h2>
-      <p class="tools">Same 2,000 movies, palindrome sweeps so the loops are seamless. Top row: <code>n_neighbors</code> from 2 (every point its own shard) to 60 (one global manifold). Bottom row: <code>min_dist</code> from 0.0 (packed clusters) to 0.8 (evenly spread). Left column: overview embeddings. Right column: poster embeddings. Colored by primary genre.</p>
+      <h2>UMAP's two most impactful parameters</h2>
+      <p class="tools">
+        <strong><code>n_neighbors</code></strong> — the size of the local neighborhood UMAP uses to learn structure. Small values preserve fine-grained clusters; large values pull toward global geometry.
+        <br>
+        <strong><code>min_dist</code></strong> — the minimum distance UMAP tries to keep between points in the reduced space. Small values pack clusters tightly; large values spread them out.
+      </p>
+      <p class="tools">Same 2,000 movies, looped back and forth so you can read the effect in both directions. Top row: <code>n_neighbors</code> from 2 (most local) to 60 (more global). Bottom row: <code>min_dist</code> from 0.0 (tight clusters) to 0.8 (evenly distributed). Left column: overview embeddings. Right column: poster embeddings. Colored by primary genre.</p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
         <div>
           <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;">overviews · <code>n_neighbors</code></div>
@@ -135,7 +140,7 @@
       </div>
 
       <h2>Emerging and fading themes, 1902 – 2026</h2>
-      <p class="tools">BERTopic's <code>topics_over_time</code> tracking when each cluster rises or falls across a century of cinema. Superhero films explode post-2008, Westerns cool after 1975, space sci-fi shifts every decade. Topics labeled by Claude.</p>
+      <p class="tools">BERTopic's <code>topics_over_time</code> tracking when each cluster rises or falls across a century of cinema — based on the same 5,000 top-voted films used everywhere else on this page. Superhero films explode post-2008, Westerns cool after 1975, space sci-fi shifts every decade. Topics labeled by Claude.</p>
       <iframe src="topics_over_time.html" title="Topics over time" style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
 
       <h2>3D poster cosmos</h2>
