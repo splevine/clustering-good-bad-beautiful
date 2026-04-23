@@ -115,11 +115,13 @@
 
       <h2>UMAP's two most impactful parameters</h2>
       <p class="tools">
-        <strong><code>n_neighbors</code></strong> — the size of the local neighborhood UMAP uses to learn structure. Small values preserve fine-grained clusters; large values pull toward global geometry.
+        <strong><code>n_neighbors</code></strong> — balances local versus global structure by constraining the size of the local neighborhood UMAP looks at when learning the manifold. Low values concentrate on fine-grained local structure; high values emphasize the global picture.
         <br>
-        <strong><code>min_dist</code></strong> — the minimum distance UMAP tries to keep between points in the reduced space. Small values pack clusters tightly; large values spread them out.
+        <strong><code>min_dist</code></strong> — the minimum distance UMAP is allowed to place points apart in the reduced space. Low values pack points tightly for clearer cluster shapes; high values spread points evenly for a broader topological view.
+        <br>
+        <span style="font-size: 0.85em;">See the <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP docs</a> for the full treatment.</span>
       </p>
-      <p class="tools">Same 2,000 movies, looped back and forth so you can read the effect in both directions. Top row: <code>n_neighbors</code> from 2 (most local) to 60 (more global). Bottom row: <code>min_dist</code> from 0.0 (tight clusters) to 0.8 (evenly distributed). Left column: overview embeddings. Right column: poster embeddings. Colored by primary genre.</p>
+      <p class="tools">Same 2,000 movies, looped back and forth so you can read the effect in both directions. Top row: <code>n_neighbors</code> from 2 (most local) to 60 (more global). Bottom row: <code>min_dist</code> from 0.0 (tight clusters) to 0.8 (evenly spread). Left column: overview embeddings. Right column: poster embeddings. Colored by primary genre.</p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
         <div>
           <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;">overviews · <code>n_neighbors</code></div>
