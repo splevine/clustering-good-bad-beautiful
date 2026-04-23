@@ -142,8 +142,43 @@
       </div>
 
       <h2>Emerging and fading themes, 1902 – 2026</h2>
-      <p class="tools">BERTopic's <code>topics_over_time</code> tracking when each cluster rises or falls across a century of cinema — based on the same 5,000 top-voted films used everywhere else on this page. Superhero films explode post-2008, Westerns cool after 1975, space sci-fi shifts every decade. Topics labeled by Claude.</p>
-      <iframe src="topics_over_time.html" title="Topics over time" style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+      <p class="tools">BERTopic's <code>topics_over_time</code> tracking when each cluster rises or falls across a century of cinema — the 5,000-top-voted-films version. Labels by Claude. See the 100K scale-up section below for the high-resolution temporal picture.</p>
+      <iframe src="topics_over_time.html" title="Topics over time (5K)" style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+
+      <h2>Scaled up to 100,000 films</h2>
+      <p class="tools">
+        The same pipeline, 20× the data. Fetched by partitioning TMDB's <code>/discover</code> queries by <code>primary_release_year</code> to bypass the 500-page cap, giving ~10,000 films per decade for 1960s–2010s and tapering at the tails. BERTopic found <strong>253 natural topics</strong> with 60% noise (long-tail films) on 97,878 substantive overviews. Coarse hierarchy layers (5 → 15 → 40) hand-labelled; finer layers fall back to c-TF-IDF keywords.
+      </p>
+
+      <h3 style="margin-top: 1.5rem;">Interactive hierarchy · 100K</h3>
+      <p class="tools">Zoom out for 5 broad themes, in for 250 specific ones. Search, release-year histogram, click-through all still work.</p>
+      <iframe src="map_100k.html" title="100K thematic hierarchy" style="width: 100%; height: 720px; border: 1px solid var(--border); border-radius: 10px; background: var(--card);"></iframe>
+
+      <h3 style="margin-top: 1.5rem;">Slide-ready static map</h3>
+      <p class="tools">High-resolution PNG for decks — 40 named clusters with medoid-positioned labels. Use as-is in slides; no Javascript or embedding required. <a href="map_static_100k.png">Download full-resolution</a>.</p>
+      <a href="map_static_100k.png"><img src="map_static_100k.png" alt="Static datamapplot at 100K" style="width: 100%; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;" /></a>
+
+      <h3 style="margin-top: 1.5rem;">BERTopic's built-in visualization suite</h3>
+      <p class="tools">The native charts that BERTopic produces from the same fit — each surfaces a different view of the 253 topics.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div>
+          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>topics_over_time</code> · decade-by-decade evolution</div>
+          <iframe src="topics_100k_over_time.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+        </div>
+        <div>
+          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>visualize_heatmap</code> · topic similarity matrix</div>
+          <iframe src="topics_100k_heatmap.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+        </div>
+        <div>
+          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>visualize_hierarchy</code> · dendrogram of topic merges</div>
+          <iframe src="topics_100k_hierarchy.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+        </div>
+        <div>
+          <div style="color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem;"><code>visualize_barchart</code> · top c-TF-IDF terms per topic</div>
+          <iframe src="topics_100k_barchart.html" style="width: 100%; height: 420px; border: 1px solid var(--border); border-radius: 10px; background: #0f1117;"></iframe>
+        </div>
+      </div>
+      <p class="tools" style="margin-top: 0.75rem;">Also rendered: <a href="topics_100k_scatter.html">topic scatter</a> (Plotly 2D view of all 253 topics sized by frequency).</p>
 
       <h2>3D poster cosmos</h2>
       <p class="tools">1,000 films in 3D, auto-rotating until you grab the camera. Orbit, pan, zoom, hover for the title. Loads posters from TMDB's CDN on first view. Open <a href="cosmos.html">the full-screen version</a>.</p>
