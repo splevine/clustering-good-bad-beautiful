@@ -43,47 +43,35 @@ def apply_dark(fig):
     return fig
 
 
-def load_claude_labels(cache_path: Path, layer_size: int | None = None):
-    """Return {topic_id: label} from the cache, using the finest-grained layer
-    whose size matches the natural topic count (or the first L0 entry)."""
+def load_topic_labels(cache_path: Path):
+    """Return {topic_id: label} from a flat dict cache keyed directly by
+    BERTopic topic_id (as int or string of int)."""
     if not cache_path.exists():
         return {}
     cache = json.loads(cache_path.read_text())
-    labels = {}
-    # Prefer entries under "L0-<layer_size>-<cid>"; if layer_size None, any L0
-    prefix = f"L0-{layer_size}-" if layer_size is not None else "L0-"
-    for key, value in cache.items():
-        if key.startswith(prefix):
-            # key is "L0-<size>-<cid>"
-            cid = int(key.rsplit("-", 1)[-1])
-            labels[cid] = value
-    return labels
+    return {int(k): v for k, v in cache.items()}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", type=Path, default=REPO / "data" / "movies.parquet")
     ap.add_argument("--embeddings", type=Path, default=REPO / "embeddings" / "overviews_minilm.npy")
-    ap.add_argument("--cache", type=Path, default=REPO / "data" / "cluster_labels.json")
+    ap.add_argument("--topic-labels", type=Path, default=REPO / "data" / "bertopic_topic_labels.json",
+                    help="JSON dict keyed by BERTopic topic_id → Claude label")
     ap.add_argument("--out-prefix", default="topics_")
     ap.add_argument("--min-cluster-size", type=int, default=20)
     ap.add_argument("--top-n-topics", type=int, default=20, help="How many topics to show in charts")
-    ap.add_argument("--layer-size-for-labels", type=int, default=None,
-                    help="Which L0-<size>-* cache entries to treat as canonical labels. "
-                         "Defaults to the number of natural topics after fitting.")
     args = ap.parse_args()
 
     movies, X = load_data(args.input, args.embeddings)
     overviews = movies["overview"].tolist()
 
     topics, topic_model, _, _ = fit_bertopic(overviews, X, min_cluster_size=args.min_cluster_size)
-    n_real = len(set(topics)) - (1 if -1 in topics else 0)
-    layer_size = args.layer_size_for_labels or max(80, n_real)
 
-    claude_labels = load_claude_labels(args.cache, layer_size=layer_size)
+    claude_labels = load_topic_labels(args.topic_labels)
     if claude_labels:
         topic_model.set_topic_labels(claude_labels)
-        print(f"applied {len(claude_labels)} labels (layer L0-{layer_size})")
+        print(f"applied {len(claude_labels)} custom topic labels from {args.topic_labels.name}")
 
     prefix = args.out_prefix
     outputs = []

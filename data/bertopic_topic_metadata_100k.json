@@ -1,0 +1,427 @@
+{
+  "0": {
+    "terms": [
+      "yakuza",
+      "samurai",
+      "tokyo",
+      "japan",
+      "japanese",
+      "ninja"
+    ],
+    "titles": [
+      "Big Hero 6",
+      "Your Name.",
+      "Gran Torino",
+      "The Last Samurai"
+    ],
+    "size": 1748
+  },
+  "1": {
+    "terms": [
+      "fu",
+      "martial",
+      "kung",
+      "kung fu",
+      "china",
+      "martial arts"
+    ],
+    "titles": [
+      "Parasite",
+      "Kung Fu Panda",
+      "Mulan",
+      "Shang-Chi and the Legend of the Ten Rings"
+    ],
+    "size": 1505
+  },
+  "2": {
+    "terms": [
+      "singh",
+      "ali",
+      "love",
+      "india",
+      "raj",
+      "village"
+    ],
+    "titles": [
+      "Mr. Nobody",
+      "Dilwale Dulhania Le Jayenge",
+      "Gandhi",
+      "Stoker"
+    ],
+    "size": 1379
+  },
+  "3": {
+    "terms": [
+      "detective",
+      "police",
+      "cop",
+      "murder",
+      "killer",
+      "reporter"
+    ],
+    "titles": [
+      "Nightcrawler",
+      "Zodiac",
+      "One Flew Over the Cuckoo's Nest",
+      "Saw"
+    ],
+    "size": 1155
+  },
+  "4": {
+    "terms": [
+      "german",
+      "nazi",
+      "war",
+      "world war",
+      "germany",
+      "war ii"
+    ],
+    "titles": [
+      "Dunkirk",
+      "Schindler's List",
+      "Fury",
+      "The Shape of Water"
+    ],
+    "size": 1063
+  },
+  "5": {
+    "terms": [
+      "doctor",
+      "hospital",
+      "patients",
+      "surgeon",
+      "nurse",
+      "dr"
+    ],
+    "titles": [
+      "Doctor Strange",
+      "10 Cloverfield Lane",
+      "The Accountant",
+      "Ghost"
+    ],
+    "size": 929
+  },
+  "6": {
+    "terms": [
+      "ranch",
+      "cowboy",
+      "cattle",
+      "outlaw",
+      "rancher",
+      "sheriff"
+    ],
+    "titles": [
+      "The Lone Ranger",
+      "The Power of the Dog",
+      "1922",
+      "The Assassination of Jesse James by the Coward Robert Ford"
+    ],
+    "size": 829
+  },
+  "7": {
+    "terms": [
+      "russian",
+      "soviet",
+      "russia",
+      "moscow",
+      "ivan",
+      "olga"
+    ],
+    "titles": [
+      "Lord of War",
+      "Locke",
+      "Doctor Zhivago",
+      "Love and Death"
+    ],
+    "size": 740
+  },
+  "8": {
+    "terms": [
+      "teacher",
+      "school",
+      "students",
+      "high school",
+      "high",
+      "student"
+    ],
+    "titles": [
+      "Dead Poets Society",
+      "The Breakfast Club",
+      "Chronicle",
+      "There's Something About Mary"
+    ],
+    "size": 597
+  },
+  "9": {
+    "terms": [
+      "film",
+      "animation",
+      "images",
+      "short",
+      "color",
+      "abstract"
+    ],
+    "titles": [
+      "The Electrical Life of Louis Wain",
+      "Lou",
+      "The Pixar Story",
+      "Six Men Getting Sick"
+    ],
+    "size": 546
+  },
+  "10": {
+    "terms": [
+      "vietnam",
+      "soldier",
+      "army",
+      "war",
+      "veteran",
+      "soldiers"
+    ],
+    "titles": [
+      "Saving Private Ryan",
+      "Hacksaw Ridge",
+      "1917",
+      "Full Metal Jacket"
+    ],
+    "size": 532
+  },
+  "11": {
+    "terms": [
+      "christmas",
+      "santa",
+      "claus",
+      "santa claus",
+      "christmas eve",
+      "eve"
+    ],
+    "titles": [
+      "The Nightmare Before Christmas",
+      "How the Grinch Stole Christmas",
+      "It's a Wonderful Life",
+      "Elf"
+    ],
+    "size": 474
+  },
+  "12": {
+    "terms": [
+      "bank",
+      "heist",
+      "robbery",
+      "thieves",
+      "thief",
+      "robbers"
+    ],
+    "titles": [
+      "Ant-Man",
+      "Reservoir Dogs",
+      "Ocean's Eight",
+      "Heat"
+    ],
+    "size": 472
+  },
+  "13": {
+    "terms": [
+      "football",
+      "team",
+      "coach",
+      "baseball",
+      "player",
+      "players"
+    ],
+    "titles": [
+      "Space Jam",
+      "Moneyball",
+      "The Founder",
+      "Jerry Maguire"
+    ],
+    "size": 460
+  },
+  "14": {
+    "terms": [
+      "earth",
+      "alien",
+      "planet",
+      "space",
+      "aliens",
+      "mars"
+    ],
+    "titles": [
+      "Avatar",
+      "The Martian",
+      "Gravity",
+      "Passengers"
+    ],
+    "size": 458
+  },
+  "15": {
+    "terms": [
+      "pierre",
+      "jean",
+      "antoine",
+      "jacques",
+      "paris",
+      "michel"
+    ],
+    "titles": [
+      "Ratatouille",
+      "To All the Boys: P.S. I Still Love You",
+      "Welcome to the Sticks",
+      "The 400 Blows"
+    ],
+    "size": 454
+  },
+  "16": {
+    "terms": [
+      "witch",
+      "devil",
+      "hell",
+      "satan",
+      "witches",
+      "demon"
+    ],
+    "titles": [
+      "Howl's Moving Castle",
+      "Constantine",
+      "Hellboy",
+      "Kiki's Delivery Service"
+    ],
+    "size": 454
+  },
+  "17": {
+    "terms": [
+      "ship",
+      "captain",
+      "sailor",
+      "sea",
+      "boat",
+      "pirate"
+    ],
+    "titles": [
+      "Pirates of the Caribbean: The Curse of the Black Pearl",
+      "Pirates of the Caribbean: Dead Man's Chest",
+      "Pirates of the Caribbean: At World's End",
+      "Pirates of the Caribbean: Dead Men Tell No Tales"
+    ],
+    "size": 452
+  },
+  "18": {
+    "terms": [
+      "brothers",
+      "twin",
+      "twins",
+      "twin brothers",
+      "siblings",
+      "sisters"
+    ],
+    "titles": [
+      "The Parent Trap",
+      "Sinners",
+      "The Prince of Egypt",
+      "Legend"
+    ],
+    "size": 442
+  },
+  "19": {
+    "terms": [
+      "band",
+      "rock",
+      "concert",
+      "tour",
+      "album",
+      "footage"
+    ],
+    "titles": [
+      "Bohemian Rhapsody",
+      "Elvis",
+      "Walk the Line",
+      "Green Room"
+    ],
+    "size": 427
+  },
+  "20": {
+    "terms": [
+      "pilot",
+      "plane",
+      "air",
+      "flight",
+      "pilots",
+      "air force"
+    ],
+    "titles": [
+      "Top Gun: Maverick",
+      "Hidden Figures",
+      "Top Gun",
+      "San Andreas"
+    ],
+    "size": 426
+  },
+  "21": {
+    "terms": [
+      "mother",
+      "child",
+      "pregnant",
+      "woman",
+      "sperm",
+      "baby"
+    ],
+    "titles": [
+      "Juno",
+      "Joy",
+      "Bad Moms",
+      "Knocked Up"
+    ],
+    "size": 389
+  },
+  "22": {
+    "terms": [
+      "agent",
+      "cia",
+      "spy",
+      "secret",
+      "intelligence",
+      "agents"
+    ],
+    "titles": [
+      "Kingsman: The Secret Service",
+      "Men in Black",
+      "Men in Black 3",
+      "The Bourne Identity"
+    ],
+    "size": 376
+  },
+  "23": {
+    "terms": [
+      "vampire",
+      "dracula",
+      "vampires",
+      "count",
+      "blood",
+      "count dracula"
+    ],
+    "titles": [
+      "The Twilight Saga: Breaking Dawn - Part 2",
+      "Hotel Transylvania",
+      "Dark Shadows",
+      "Blade"
+    ],
+    "size": 368
+  },
+  "24": {
+    "terms": [
+      "dog",
+      "dogs",
+      "puppy",
+      "stray",
+      "canine",
+      "boy"
+    ],
+    "titles": [
+      "Hachi: A Dog's Tale",
+      "One Hundred and One Dalmatians",
+      "Lady and the Tramp",
+      "Isle of Dogs"
+    ],
+    "size": 365
+  }
+}
