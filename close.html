@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Close · Clustering</title>
+  <meta name="description" content="Presentation mode · closer." />
+  <style>
+    :root {
+      --bg: #0f1117;
+      --fg: #e8e8ea;
+      --muted: #9aa0a6;
+      --accent: #ffb454;
+      --accent-dim: #6a4a1f;
+      --card: #171a22;
+      --border: #262a36;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      background: var(--bg); color: var(--fg);
+      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+    }
+    body { cursor: none; }
+    body.show-cursor { cursor: default; }
+
+    .stage {
+      position: fixed; inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 4vw;
+    }
+    .stage.active { opacity: 1; pointer-events: auto; }
+    .stage .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(rgba(15,17,23,0.85), rgba(15,17,23,0.95));
+      z-index: 1;
+    }
+    .content { position: relative; z-index: 3; max-width: 1200px; }
+
+    .mega { font-size: clamp(3rem, 11vw, 9rem); font-weight: 800; letter-spacing: -0.03em; line-height: 0.95; margin: 0; }
+    .huge { font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; margin: 0; }
+    .big  { font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 500; line-height: 1.25; margin: 0; }
+    .small { font-size: clamp(1rem, 1.4vw, 1.15rem); color: var(--muted); margin-top: 2rem; }
+    .mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .accent { color: var(--accent); }
+    .muted { color: var(--muted); }
+
+    /* SCENE 1 · montage */
+    #s1 .montage {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
+    #s1 .clip {
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+    #s1 .clip.active { opacity: 1; }
+    #s1 .clip video,
+    #s1 .clip iframe,
+    #s1 .clip img {
+      width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;
+    }
+    #s1 .caption {
+      position: absolute;
+      bottom: 10%; left: 0; right: 0;
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    #s1 .caption.active { opacity: 1; transform: none; }
+    #s1 .caption-label { display: inline-block; padding: 0.5rem 1rem; background: rgba(15,17,23,0.75); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    #s1 .caption-title { margin-top: 0.8rem; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; }
+
+    /* SCENE 2 · Box quote */
+    #s2 .content .line {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    #s2.show-1 .l1 { opacity: 1; transform: none; }
+    #s2.show-2 .l2 { opacity: 1; transform: none; }
+    #s2.show-3 .author { opacity: 1; transform: none; }
+    #s2 .author {
+      margin-top: 2.5rem;
+      color: var(--muted);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
+    }
+
+    /* SCENE 3 · takeaway */
+    #s3 .t1, #s3 .t2 {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    #s3.show-1 .t1 { opacity: 1; transform: none; }
+    #s3.show-2 .t2 { opacity: 1; transform: none; }
+    #s3 .t2 { margin-top: 0.4rem; }
+
+    /* SCENE 4 · CTA */
+    #s4 .content {
+      display: flex; flex-direction: column; align-items: center; gap: 2rem;
+    }
+    #s4 .thanks {
+      font-size: clamp(3rem, 10vw, 8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1; margin: 0;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    #s4.show-1 .thanks { opacity: 1; transform: none; }
+    #s4 .speaker {
+      color: var(--muted);
+      font-size: clamp(1rem, 1.8vw, 1.3rem);
+      margin-top: -0.5rem;
+      opacity: 0;
+      transition: opacity 0.9s ease 0.3s;
+    }
+    #s4.show-1 .speaker { opacity: 1; }
+    #s4 .repo {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.75rem;
+      align-items: center;
+      margin-top: 2rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(23, 26, 34, 0.75);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.9s ease 0.6s, transform 0.9s ease 0.6s;
+    }
+    #s4.show-1 .repo { opacity: 1; transform: none; }
+    #s4 .qr {
+      width: 160px; height: 160px;
+      background: white; padding: 10px;
+      border-radius: 12px;
+    }
+    #s4 .qr img { width: 100%; height: 100%; display: block; }
+    #s4 .repo-url {
+      font-family: ui-monospace, monospace;
+      font-size: clamp(1rem, 1.8vw, 1.3rem);
+      color: var(--accent);
+      text-align: left;
+    }
+    #s4 .repo-url .meta {
+      display: block;
+      color: var(--muted);
+      font-family: "Inter", sans-serif;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Easter egg — poster swarm */
+    .egg-layer {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 50;
+    }
+    .egg-poster {
+      position: absolute;
+      width: 88px; height: 132px;
+      border-radius: 6px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      object-fit: cover;
+      will-change: transform;
+      opacity: 0;
+      animation: eggDrift 6s ease-in-out forwards;
+    }
+    @keyframes eggDrift {
+      0% { opacity: 0; transform: translate(var(--x0), var(--y0)) rotate(var(--r0)) scale(0.4); }
+      15% { opacity: 0.95; }
+      100% { opacity: 0; transform: translate(var(--x1), var(--y1)) rotate(var(--r1)) scale(1); }
+    }
+    .egg-hint {
+      position: fixed; bottom: 4%; left: 50%;
+      transform: translateX(-50%);
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      opacity: 0;
+      z-index: 51;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    body.egg-hint-show .egg-hint { opacity: 0.9; }
+
+    /* HUD */
+    .hud {
+      position: fixed;
+      bottom: 1rem; right: 1.2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-family: ui-monospace, monospace;
+      z-index: 99;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      user-select: none;
+    }
+    body:hover .hud { opacity: 1; }
+    .hud kbd {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.05rem 0.4rem;
+      font-family: inherit; font-size: 0.75rem;
+      margin: 0 0.1rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- SCENE 1 · montage -->
+  <section class="stage active" id="s1">
+    <div class="montage">
+      <div class="clip" data-clip="0">
+        <video autoplay loop muted playsinline><source src="animation_text.mp4" type="video/mp4" /></video>
+      </div>
+      <div class="clip" data-clip="1">
+        <video autoplay loop muted playsinline><source src="animation_posters.mp4" type="video/mp4" /></video>
+      </div>
+      <div class="clip" data-clip="2">
+        <img src="map_static_100k.png" alt="100K static datamapplot" />
+      </div>
+      <div class="clip" data-clip="3">
+        <iframe src="cosmos.html" loading="lazy"></iframe>
+      </div>
+    </div>
+    <div class="overlay"></div>
+    <div class="caption" data-cap="0">
+      <span class="caption-label">UMAP's two knobs</span>
+      <div class="caption-title">Sweep, don't set.</div>
+    </div>
+    <div class="caption" data-cap="1">
+      <span class="caption-label">Same pipeline · different modality</span>
+      <div class="caption-title">Swap the encoder.</div>
+    </div>
+    <div class="caption" data-cap="2">
+      <span class="caption-label">100,000 films · labelled</span>
+      <div class="caption-title">The labelling layer got smarter.</div>
+    </div>
+    <div class="caption" data-cap="3">
+      <span class="caption-label">The beautiful</span>
+      <div class="caption-title">Catalogs become constellations.</div>
+    </div>
+  </section>
+
+  <!-- SCENE 2 · Box quote -->
+  <section class="stage" id="s2">
+    <div class="content">
+      <p class="huge line l1">All models are wrong,</p>
+      <p class="huge line l2 accent" style="margin-top: 0.4rem;">but some are useful.</p>
+      <p class="small author">— George E. P. Box, 1976</p>
+    </div>
+  </section>
+
+  <!-- SCENE 3 · takeaway -->
+  <section class="stage" id="s3">
+    <div class="content">
+      <p class="mega t1">Clustering is a <span class="accent">pipeline</span>,</p>
+      <p class="mega t2">not a <span class="muted">button</span>.</p>
+      <p class="small" style="margin-top: 3rem;">And every stage has an LLM-era upgrade you might not be using yet.</p>
+    </div>
+  </section>
+
+  <!-- SCENE 4 · CTA -->
+  <section class="stage" id="s4">
+    <div class="content">
+      <p class="thanks">Thank you.</p>
+      <p class="speaker">Seth Levine · Lead ML Scientist, Loris.ai</p>
+      <div class="repo">
+        <div class="qr">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fgithub.com%2Fsplevine%2Fclustering-good-bad-beautiful&color=0f1117&bgcolor=ffffff" alt="Repo QR code" />
+        </div>
+        <div class="repo-url">
+          github.com/splevine/<br />clustering-good-bad-beautiful
+          <span class="meta">All notebooks, data scripts, and visualizations. Colab-ready.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="egg-layer" id="eggLayer"></div>
+  <div class="egg-hint">🎬 poster storm · press <kbd style="background: rgba(0,0,0,0.4); padding: 0 0.3rem; border-radius: 3px;">c</kbd> again to keep going</div>
+
+  <div class="hud">
+    <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>esc</kbd> exit
+  </div>
+
+  <script>
+    const stages = Array.from(document.querySelectorAll(".stage"));
+    let idx = 0;
+
+    function activate(i) {
+      stages.forEach((s, j) => s.classList.toggle("active", i === j));
+      idx = i;
+      runScene(i);
+    }
+
+    const keys = { next: ["Space", "ArrowRight", "KeyN", "Enter"], prev: ["ArrowLeft", "KeyP", "Backspace"] };
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "KeyC") { e.preventDefault(); triggerEasterEgg(); return; }
+      if (keys.next.includes(e.code)) { e.preventDefault(); if (idx < stages.length - 1) activate(idx + 1); }
+      else if (keys.prev.includes(e.code)) { e.preventDefault(); if (idx > 0) activate(idx - 1); }
+      else if (e.code === "Escape") { window.location.href = "index.html"; }
+    });
+    window.addEventListener("mousemove", () => document.body.classList.add("show-cursor"));
+
+    // --- SCENE 1 · montage auto-cycle ---
+    const clips = document.querySelectorAll("#s1 .clip");
+    const caps = document.querySelectorAll("#s1 .caption");
+    let montageIdx = 0;
+    let montageTimer = null;
+    function montageCycle() {
+      clips.forEach((c, i) => c.classList.toggle("active", i === montageIdx));
+      caps.forEach((c, i) => c.classList.toggle("active", i === montageIdx));
+      montageIdx = (montageIdx + 1) % clips.length;
+    }
+    function startMontage() {
+      stopMontage();
+      montageIdx = 0;
+      montageCycle();
+      montageTimer = setInterval(montageCycle, 2600);
+    }
+    function stopMontage() {
+      if (montageTimer) { clearInterval(montageTimer); montageTimer = null; }
+    }
+
+    // --- SCENE 2 · Box quote reveal ---
+    function s2Reveal() {
+      const el = document.getElementById("s2");
+      [800, 2000, 3500].forEach((t, k) => setTimeout(() => {
+        if (idx === 1) el.classList.add("show-" + (k + 1));
+      }, t));
+    }
+
+    // --- SCENE 3 · takeaway ---
+    function s3Reveal() {
+      const el = document.getElementById("s3");
+      [600, 2000].forEach((t, k) => setTimeout(() => {
+        if (idx === 2) el.classList.add("show-" + (k + 1));
+      }, t));
+    }
+
+    // --- SCENE 4 · CTA ---
+    function s4Reveal() {
+      setTimeout(() => { if (idx === 3) document.getElementById("s4").classList.add("show-1"); }, 400);
+    }
+
+    function runScene(i) {
+      // Clear scene-state that isn't this one
+      document.getElementById("s2").classList.remove("show-1", "show-2", "show-3");
+      document.getElementById("s3").classList.remove("show-1", "show-2");
+      document.getElementById("s4").classList.remove("show-1");
+      stopMontage();
+
+      const stage = stages[i];
+      if (stage.id === "s1") startMontage();
+      if (stage.id === "s2") s2Reveal();
+      if (stage.id === "s3") s3Reveal();
+      if (stage.id === "s4") s4Reveal();
+    }
+
+    // --- Easter egg: poster swarm ---
+    // Top-voted films from the TMDB dataset at w154 size.
+    const POSTERS = [
+      "https://image.tmdb.org/t/p/w154/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+      "https://image.tmdb.org/t/p/w154/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
+      "https://image.tmdb.org/t/p/w154/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+      "https://image.tmdb.org/t/p/w154/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+      "https://image.tmdb.org/t/p/w154/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg",
+      "https://image.tmdb.org/t/p/w154/3E53WEZJqP6aM84D8CckXx4pIHw.jpg",
+      "https://image.tmdb.org/t/p/w154/jSziioSwPVrOy9Yow3XhWIBDjq1.jpg",
+      "https://image.tmdb.org/t/p/w154/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg",
+      "https://image.tmdb.org/t/p/w154/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg",
+      "https://image.tmdb.org/t/p/w154/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg",
+      "https://image.tmdb.org/t/p/w154/saHP97rTPS5eLmrLQEcANmKrsFl.jpg",
+      "https://image.tmdb.org/t/p/w154/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
+      "https://image.tmdb.org/t/p/w154/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg",
+      "https://image.tmdb.org/t/p/w154/78lPtwv72eTNqFW9COBYI0dWDJa.jpg",
+      "https://image.tmdb.org/t/p/w154/7oWY8VDWW7thTzWh3OKYRkWUlD5.jpg",
+      "https://image.tmdb.org/t/p/w154/aOIuZAjPaRIE6CMzbazvcHuHXDc.jpg",
+      "https://image.tmdb.org/t/p/w154/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg",
+      "https://image.tmdb.org/t/p/w154/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+      "https://image.tmdb.org/t/p/w154/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+      "https://image.tmdb.org/t/p/w154/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
+      "https://image.tmdb.org/t/p/w154/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg",
+      "https://image.tmdb.org/t/p/w154/kW9LmvYHAaS9iA0tHmZVq8hQYoq.jpg",
+      "https://image.tmdb.org/t/p/w154/nrmXQ0zcZUL8jFLrakWc90IR8z9.jpg",
+      "https://image.tmdb.org/t/p/w154/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg",
+      "https://image.tmdb.org/t/p/w154/hr0L2aueqlP2BYUblTTjmtn0hw4.jpg",
+    ];
+    const eggLayer = document.getElementById("eggLayer");
+    let eggCount = 0;
+    function triggerEasterEgg() {
+      document.body.classList.add("egg-hint-show");
+      for (let i = 0; i < 18; i++) {
+        const url = POSTERS[Math.floor(Math.random() * POSTERS.length)];
+        const img = document.createElement("img");
+        img.className = "egg-poster";
+        img.src = url;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 30 + Math.random() * 40;
+        const startX = 50 + Math.cos(angle) * 8;
+        const startY = 50 + Math.sin(angle) * 6;
+        const endX = 50 + Math.cos(angle) * dist;
+        const endY = 50 + Math.sin(angle) * dist;
+        img.style.left = startX + "%";
+        img.style.top = startY + "%";
+        img.style.setProperty("--x0", "0px");
+        img.style.setProperty("--y0", "0px");
+        img.style.setProperty("--x1", ((endX - startX) * window.innerWidth / 100) + "px");
+        img.style.setProperty("--y1", ((endY - startY) * window.innerHeight / 100) + "px");
+        img.style.setProperty("--r0", (Math.random() * 40 - 20) + "deg");
+        img.style.setProperty("--r1", (Math.random() * 120 - 60) + "deg");
+        img.style.animationDelay = (Math.random() * 0.4) + "s";
+        eggLayer.appendChild(img);
+        setTimeout(() => img.remove(), 6500);
+      }
+      eggCount++;
+      setTimeout(() => document.body.classList.remove("egg-hint-show"), 4200);
+    }
+
+    // Kick off scene 1
+    runScene(0);
+  </script>
+</body>
+</html>
