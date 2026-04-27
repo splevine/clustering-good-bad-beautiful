@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tools &amp; libraries · Clustering: The Good, The Bad and The Beautiful</title>
+    <meta name="description" content="The open-source stack behind Seth Levine's ODSC AI East 2026 talk on modern clustering workflows." />
+    <style>
+      :root {
+        --bg: #0f1117;
+        --fg: #e8e8ea;
+        --muted: #9aa0a6;
+        --accent: #ffb454;
+        --accent-dim: #6a4a1f;
+        --card: #171a22;
+        --border: #262a36;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.55;
+      }
+      main { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+      header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+      .kicker {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; margin: 0.5rem 0 0.75rem; }
+      .lede { color: var(--muted); font-size: 1rem; max-width: 62ch; }
+      h2 {
+        font-size: 1.25rem;
+        margin: 2.5rem 0 1rem;
+        border-top: 1px solid var(--border);
+        padding-top: 1.5rem;
+      }
+      h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2rem; }
+      a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
+      a:hover { border-bottom-color: var(--accent); }
+      .tools-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(2, 1fr); }
+      .tool {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 0.95rem 1.05rem;
+      }
+      .tool h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+      .tool h3 a { border-bottom: none; }
+      .tool h3 a:hover { border-bottom: 1px solid var(--accent); }
+      .tool .role {
+        display: inline-block;
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: rgba(255, 180, 84, 0.08);
+        border: 1px solid var(--accent-dim);
+        border-radius: 999px;
+        padding: 0.08rem 0.55rem;
+        margin-left: 0.4rem;
+        vertical-align: middle;
+      }
+      .tool p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+      .tool .used {
+        display: block;
+        margin-top: 0.5rem;
+        color: var(--fg);
+        font-size: 0.82rem;
+        opacity: 0.85;
+      }
+      .pipeline-map {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.15rem;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+      .pipeline-map code {
+        background: #1c1f29;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+        color: var(--fg);
+        font-size: 0.85rem;
+      }
+      .pipeline-map .stage-line { margin: 0.25rem 0; }
+      footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+      @media (max-width: 640px) {
+        .tools-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="kicker">Stack · libraries &amp; tooling</div>
+        <h1>The open-source stack behind the talk</h1>
+        <p class="lede">
+          Every library doing visible work in the demos, grouped by where it sits in the pipeline.
+        </p>
+        <p class="tools" style="margin-top: 0.75rem; color: var(--muted);"><a href="index.html">← back to the main page</a></p>
+      </header>
+
+      <h2>Pipeline cheat-sheet</h2>
+      <div class="pipeline-map">
+        <div class="stage-line"><strong>raw data</strong> — <code>requests</code>, <code>pandas</code>, <code>pyarrow</code>, <code>tqdm</code></div>
+        <div class="stage-line"><strong>encoding</strong> — <code>sentence-transformers</code>, CLIP</div>
+        <div class="stage-line"><strong>dim reduction</strong> — <code>umap-learn</code></div>
+        <div class="stage-line"><strong>clustering</strong> — <code>hdbscan</code>, <code>evoc</code>, <code>scikit-learn</code></div>
+        <div class="stage-line"><strong>topic modeling &amp; labels</strong> — <code>bertopic</code>, <code>anthropic</code></div>
+        <div class="stage-line"><strong>visualization</strong> — <code>datamapplot</code>, <code>matplotlib</code>, <code>imageio-ffmpeg</code></div>
+        <div class="stage-line"><strong>environment</strong> — <code>uv</code>, <code>jupyterlab</code>, Colab</div>
+      </div>
+
+      <h2>Encoding &amp; embeddings</h2>
+      <div class="tools-grid">
+        <div class="tool">
+          <h3><a href="https://www.sbert.net/">sentence-transformers</a><span class="role">Text encoder</span></h3>
+          <p>Sentence and image embeddings on top of Hugging Face. Runs <code>all-MiniLM-L6-v2</code> on the overviews and <code>clip-ViT-B-32</code> on the posters.</p>
+          <span class="used">Used in: <code>01_the_good.ipynb</code>, <code>03_the_beautiful.ipynb</code>, <code>scripts/embed_overviews.py</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://github.com/openai/CLIP">CLIP (ViT-B/32)</a><span class="role">Image encoder</span></h3>
+          <p>Contrastive Language-Image Pretraining. Same pipeline, different encoder — the multimodal pivot in The Beautiful.</p>
+          <span class="used">Used in: <code>03_the_beautiful.ipynb</code></span>
+        </div>
+      </div>
+
+      <h2>Dimensionality reduction</h2>
+      <div class="tools-grid">
+        <div class="tool">
+          <h3><a href="https://umap-learn.readthedocs.io/">UMAP</a><span class="role">Manifold</span></h3>
+          <p>Leland McInnes's uniform manifold approximation. Two outputs from the same fit: 5-D for the clusterer to breathe in, 2-D for the maps.</p>
+          <span class="used">Used in: all three notebooks, <code>scripts/render_animations.py</code> (the <code>n_neighbors</code> / <code>min_dist</code> sweeps)</span>
+        </div>
+      </div>
+
+      <h2>Clustering</h2>
+      <div class="tools-grid">
+        <div class="tool">
+          <h3><a href="https://hdbscan.readthedocs.io/">HDBSCAN</a><span class="role">Density</span></h3>
+          <p>Hierarchical density-based clustering. No <em>k</em>, noise labelled <code>-1</code> by design — the whole reason The Good works.</p>
+          <span class="used">Used in: <code>01_the_good.ipynb</code>, transitively through BERTopic</span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://github.com/TutteInstitute/evoc">EVoC</a><span class="role">Density-tree</span></h3>
+          <p>Embedding Vector Clustering — newer density-tree clusterer from the McInnes lab. Builds its own nearest-neighbor graph; used on poster embeddings in The Beautiful.</p>
+          <span class="used">Used in: <code>03_the_beautiful.ipynb</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://scikit-learn.org/">scikit-learn</a><span class="role">Baselines</span></h3>
+          <p>The canonical ML toolkit. Used for k-means baselines, ARI/silhouette metrics, and the sensitivity/structureless-data demos in The Bad.</p>
+          <span class="used">Used in: <code>02_the_bad.ipynb</code></span>
+        </div>
+      </div>
+
+      <h2>Topic modeling &amp; labels</h2>
+      <div class="tools-grid">
+        <div class="tool">
+          <h3><a href="https://maartengr.github.io/BERTopic/">BERTopic</a><span class="role">Topics</span></h3>
+          <p>Maarten Grootendorst's topic-modeling framework — wraps UMAP + HDBSCAN + c-TF-IDF into one pipeline. The "before LLMs" labels (<code>0_planet_earth_space_alien</code>) come from here.</p>
+          <span class="used">Used in: <code>01_the_good.ipynb</code>, <code>scripts/label_hierarchy.py</code>, <code>scripts/bertopic_visuals.py</code>, <code>scripts/topics_over_time.py</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://docs.claude.com/">Claude (Anthropic)</a><span class="role">LLM labels</span></h3>
+          <p>Frontier LLM used to relabel BERTopic clusters from keyword strings into human-readable themes (<em>Space sci-fi</em>, <em>Neo-noir crime</em>). Ran on Claude Haiku — ~155 labels for under $0.50.</p>
+          <span class="used">Used in: <code>scripts/label_hierarchy.py</code></span>
+        </div>
+      </div>
+
+      <h2>Visualization</h2>
+      <div class="tools-grid">
+        <div class="tool">
+          <h3><a href="https://datamapplot.readthedocs.io/">datamapplot</a><span class="role">Maps</span></h3>
+          <p>The payoff renderer — interactive scatter maps with hover, search, zoom-dependent labels and the poster-thumbnail mode. Ships both the 5K and 100K maps.</p>
+          <span class="used">Used in: <code>scripts/static_map.py</code>, poster constellation, 100K map</span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://matplotlib.org/">Matplotlib</a><span class="role">Statics</span></h3>
+          <p>The static renderer — UMAP parameter-sweep frames and the 100K static map.</p>
+          <span class="used">Used in: <code>scripts/render_animations.py</code>, <code>scripts/static_map.py</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://github.com/imageio/imageio-ffmpeg">imageio-ffmpeg</a><span class="role">Video</span></h3>
+          <p>FFmpeg bridge that stitches the matplotlib frames into the MP4/GIF UMAP sweeps.</p>
+          <span class="used">Used in: <code>scripts/render_animations.py</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://plotly.com/python/">Plotly</a><span class="role">BERTopic charts</span></h3>
+          <p>Backs BERTopic's native charts (<code>visualize_topics_over_time</code>, <code>_heatmap</code>, <code>_barchart</code>, <code>_hierarchy</code>) — the whole <a href="extras.html">extras</a> page.</p>
+          <span class="used">Used transitively through BERTopic</span>
+        </div>
+      </div>
+
+      <h2>Data &amp; infrastructure</h2>
+      <div class="tools-grid">
+        <div class="tool">
+          <h3><a href="https://www.themoviedb.org/">TMDB</a><span class="role">Dataset</span></h3>
+          <p>The Movie Database — source of the top 5,000 (and 100K) films by vote count: metadata, overviews, poster URLs. Free API, requires a Read Access Token.</p>
+          <span class="used">Used in: <code>scripts/fetch_movies.py</code>, <code>scripts/fetch_posters.py</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://pandas.pydata.org/">pandas</a> + <a href="https://arrow.apache.org/docs/python/">PyArrow</a><span class="role">Dataframes</span></h3>
+          <p>Every intermediate artifact is a Parquet file — movies, embeddings, topic assignments. pandas for manipulation, PyArrow for the on-disk format.</p>
+          <span class="used">Used everywhere</span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://docs.astral.sh/uv/">uv</a><span class="role">Env manager</span></h3>
+          <p>Astral's fast Python package manager. One <code>uv sync</code> and you have the exact environment that rendered every artifact on the site.</p>
+          <span class="used">Used in: <code>pyproject.toml</code>, <code>uv.lock</code></span>
+        </div>
+        <div class="tool">
+          <h3><a href="https://jupyter.org/">JupyterLab</a> + <a href="https://colab.research.google.com/">Colab</a><span class="role">Notebooks</span></h3>
+          <p>JupyterLab locally, Colab for attendees — every notebook ships a Colab badge so the talk is one click from a running environment.</p>
+          <span class="used">Used in: all notebooks</span>
+        </div>
+      </div>
+
+      <footer>
+        By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>
+        <p style="margin-top: 0.75rem; font-size: 0.8rem;">Movie data via <a href="https://www.themoviedb.org/">TMDB</a>. This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
+      </footer>
+    </main>
+  </body>
+</html>

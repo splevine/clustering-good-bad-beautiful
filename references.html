@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>References &amp; inspirations · Clustering: The Good, The Bad and The Beautiful</title>
+    <meta name="description" content="Talks that inspired Seth Levine's ODSC AI East 2026 session, plus links to the Learning from Machine Learning podcast." />
+    <style>
+      :root {
+        --bg: #0f1117;
+        --fg: #e8e8ea;
+        --muted: #9aa0a6;
+        --accent: #ffb454;
+        --accent-dim: #6a4a1f;
+        --card: #171a22;
+        --border: #262a36;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.55;
+      }
+      main { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+      header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+      .kicker {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; margin: 0.5rem 0 0.75rem; }
+      .lede { color: var(--muted); font-size: 1rem; max-width: 62ch; }
+      h2 {
+        font-size: 1.25rem;
+        margin: 2.5rem 0 1rem;
+        border-top: 1px solid var(--border);
+        padding-top: 1.5rem;
+      }
+      h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2rem; }
+      a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
+      a:hover { border-bottom-color: var(--accent); }
+      .talk {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.15rem;
+        margin-bottom: 0.85rem;
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 1.1rem;
+        align-items: start;
+      }
+      .talk .thumb {
+        position: relative;
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: #000;
+      }
+      .talk .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .talk .thumb::after {
+        content: "▶";
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 2rem;
+        background: rgba(0,0,0,0.25);
+        opacity: 0.85;
+        transition: opacity 0.15s;
+      }
+      .talk .thumb:hover::after { opacity: 1; }
+      .talk h3 { margin: 0 0 0.3rem; font-size: 1.02rem; }
+      .talk h3 a { border-bottom: none; }
+      .talk h3 a:hover { border-bottom: 1px solid var(--accent); }
+      .talk .speaker { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.4rem; }
+      .talk p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+      .podcast-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.25rem 1.4rem;
+      }
+      .podcast-card h3 { margin: 0 0 0.4rem; font-size: 1.15rem; }
+      .podcast-card p { margin: 0 0 1rem; color: var(--muted); font-size: 0.95rem; }
+      .podcast-links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .podcast-links a {
+        display: inline-block;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.85rem;
+        background: #1c1f29;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--fg);
+      }
+      .podcast-links a:hover { border-color: var(--accent); color: var(--accent); }
+      footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+      @media (max-width: 640px) {
+        .talk { grid-template-columns: 1fr; }
+        .talk .thumb { max-width: 320px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="kicker">References · inspirations</div>
+        <h1>Talks that shaped this one</h1>
+        <p class="lede">
+          The people whose work built the stack at the heart of the talk.
+        </p>
+        <p class="tools" style="margin-top: 0.75rem; color: var(--muted);"><a href="index.html">← back to the main page</a></p>
+      </header>
+
+      <h2>Inspirational talks</h2>
+
+      <div class="talk">
+        <a class="thumb" href="https://www.youtube.com/watch?v=6sSOr2Yaq80" aria-label="Watch Leland McInnes on UMAP">
+          <img src="https://img.youtube.com/vi/6sSOr2Yaq80/hqdefault.jpg" alt="Thumbnail for Leland McInnes UMAP talk" loading="lazy" />
+        </a>
+        <div>
+          <h3><a href="https://www.youtube.com/watch?v=6sSOr2Yaq80">UMAP: Uniform Manifold Approximation and Projection</a></h3>
+          <div class="speaker">Leland McInnes</div>
+          <p>The canonical UMAP talk by its creator. Explains <em>why</em> the knobs behave the way they do — the foundation under the <code>n_neighbors</code> and <code>min_dist</code> sweeps in The Good. Same lab also brought us HDBSCAN and EVoC.</p>
+        </div>
+      </div>
+
+      <div class="talk">
+        <a class="thumb" href="https://www.youtube.com/watch?v=bLW_RH2Y6oI" aria-label="Watch Maarten Grootendorst on BERTopic">
+          <img src="https://img.youtube.com/vi/bLW_RH2Y6oI/hqdefault.jpg" alt="Thumbnail for Maarten Grootendorst BERTopic talk" loading="lazy" />
+        </a>
+        <div>
+          <h3><a href="https://www.youtube.com/watch?v=bLW_RH2Y6oI">BERTopic: Topic Modeling with Transformers</a></h3>
+          <div class="speaker">Maarten Grootendorst</div>
+          <p>BERTopic's author walking through the design: embeddings → UMAP → HDBSCAN → c-TF-IDF. The "modern pipeline" argument in The Good traces back to this framing.</p>
+        </div>
+      </div>
+
+      <h2>Podcast · Learning from Machine Learning</h2>
+
+      <div class="podcast-card">
+        <h3>Learning from Machine Learning</h3>
+        <p>
+          My podcast on the insights behind a career in machine learning and data science — industry practitioners on what they've learned, what the field is becoming, and how it's reshaping the world around us.
+        </p>
+        <div class="podcast-links">
+          <a href="https://pod.link/1663925230">All players</a>
+          <a href="https://podcasts.apple.com/us/podcast/learning-from-machine-learning/id1663925230">Apple Podcasts</a>
+          <a href="https://open.spotify.com/show/2w787MHWhbcJMgZ6k1e5v8">Spotify</a>
+          <a href="https://mindfulmachines.substack.com/podcast">Substack</a>
+        </div>
+      </div>
+
+      <footer>
+        By <a href="https://github.com/splevine">Seth Levine</a> · <a href="https://github.com/splevine/clustering-good-bad-beautiful">source on GitHub</a>
+      </footer>
+    </main>
+  </body>
+</html>
