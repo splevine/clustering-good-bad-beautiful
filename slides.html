@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slides · The Art of Clustering</title>
+  <meta name="description" content="Presentation deck — pipeline-stage walkthrough with Good / Bad / Beautiful framings." />
+  <style>
+    :root {
+      --bg: #0f1117;
+      --fg: #e8e8ea;
+      --muted: #9aa0a6;
+      --accent: #ffb454;
+      --accent-dim: #6a4a1f;
+      --good: #a3be8c;
+      --bad: #d08770;
+      --beautiful: #ffb454;
+      --card: #171a22;
+      --border: #262a36;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      background: var(--bg); color: var(--fg);
+      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+    }
+    body { cursor: none; }
+    body.show-cursor { cursor: default; }
+
+    /* Pipeline nav — persistent across stage slides */
+    .pipeline-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex; flex-wrap: nowrap; align-items: center; justify-content: center;
+      gap: 0.3rem;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 17, 23, 0.94);
+      border-bottom: 1px solid var(--border);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      font-size: clamp(0.65rem, 0.95vw, 0.88rem);
+    }
+    .pipeline-nav.hidden {
+      opacity: 0; pointer-events: none;
+      transform: translateY(-100%);
+    }
+    .pipeline-nav .pn-stage {
+      padding: 0.28rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #1c1f29;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: color 0.35s ease, border-color 0.35s ease, background 0.35s ease;
+    }
+    .pipeline-nav .pn-stage.lit {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(255, 180, 84, 0.08);
+    }
+    .pipeline-nav .pn-arrow { color: var(--accent); opacity: 0.4; font-size: 0.8rem; }
+
+    /* Stage layout */
+    .stage {
+      position: fixed; inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 4.5rem 4vw 4vw;
+    }
+    .stage.active { opacity: 1; pointer-events: auto; }
+    .content {
+      position: relative; z-index: 2;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* Typography */
+    .mega { font-size: clamp(3rem, 11vw, 9rem); font-weight: 800; letter-spacing: -0.03em; line-height: 0.95; margin: 0; }
+    .huge { font-size: clamp(2.2rem, 7vw, 5.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; margin: 0; }
+    .big  { font-size: clamp(1.4rem, 3.2vw, 2.6rem); font-weight: 500; line-height: 1.25; margin: 0; }
+    .med  { font-size: clamp(1.1rem, 2vw, 1.6rem); color: var(--fg); line-height: 1.4; margin: 0; }
+    .small { font-size: clamp(0.9rem, 1.3vw, 1.1rem); color: var(--muted); margin-top: 1.4rem; }
+    .mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .accent { color: var(--accent); }
+    .muted  { color: var(--muted); }
+    .kicker {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: clamp(0.72rem, 1.05vw, 0.92rem);
+      font-weight: 700;
+      margin-bottom: 1.1rem;
+      display: block;
+    }
+    .kicker .stage-label { color: var(--muted); margin-right: 0.5rem; }
+
+    /* Variant tags */
+    .variant-tag {
+      display: inline-block;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: 1px solid;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+    .variant-tag.good      { color: var(--good);      border-color: var(--good);      background: rgba(163, 190, 140, 0.08); }
+    .variant-tag.bad       { color: var(--bad);       border-color: var(--bad);       background: rgba(208, 135, 112, 0.08); }
+    .variant-tag.beautiful { color: var(--beautiful); border-color: var(--beautiful); background: rgba(255, 180, 84, 0.08); }
+
+    /* Section title cards (no pipeline nav) */
+    .section-card .label {
+      color: var(--muted);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Code block */
+    .code {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.4rem;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: clamp(0.95rem, 1.7vw, 1.4rem);
+      color: var(--fg);
+      text-align: left;
+      max-width: 880px;
+      margin: 1.25rem auto;
+      overflow-x: auto;
+    }
+    .code .com { color: var(--muted); }
+    .code .kw  { color: var(--accent); }
+
+    /* Pipeline diagram (full pipeline overview slide) */
+    .pipeline-full {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      gap: 0.45rem;
+      margin: 2rem 0;
+    }
+    .pipeline-full .pf-stage {
+      padding: 0.7rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #1c1f29;
+      font-size: clamp(0.82rem, 1.3vw, 1.05rem);
+      font-weight: 500;
+    }
+    .pipeline-full .pf-arrow { color: var(--accent); opacity: 0.55; font-size: 1.1rem; }
+
+    /* Stat blocks */
+    .stat-row {
+      display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap;
+      margin: 2rem 0 1rem;
+    }
+    .stat { text-align: center; }
+    .stat .num {
+      font-size: clamp(3rem, 9vw, 7rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--accent);
+    }
+    .stat .lbl {
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-size: clamp(0.85rem, 1.25vw, 1.05rem);
+    }
+
+    /* Triptych — three-panel Good/Bad/Beautiful layout */
+    .triptych {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem auto 0;
+      max-width: 1100px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.15rem 1.1rem;
+      text-align: left;
+      border-top: 3px solid;
+    }
+    .panel.good      { border-top-color: var(--good); }
+    .panel.bad       { border-top-color: var(--bad); }
+    .panel.beautiful { border-top-color: var(--beautiful); }
+    .panel .panel-tag {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.55rem;
+    }
+    .panel.good .panel-tag      { color: var(--good); }
+    .panel.bad  .panel-tag      { color: var(--bad); }
+    .panel.beautiful .panel-tag { color: var(--beautiful); }
+    .panel h3 {
+      margin: 0 0 0.55rem;
+      font-size: clamp(0.95rem, 1.55vw, 1.3rem);
+      color: var(--fg);
+      line-height: 1.25;
+    }
+    .panel p {
+      margin: 0;
+      font-size: clamp(0.82rem, 1.2vw, 1rem);
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .panel .panel-detail {
+      margin-top: 0.55rem;
+      font-size: 0.85rem;
+      color: var(--fg);
+      opacity: 0.9;
+    }
+
+    /* Cluster preview list (WWII slide) */
+    .cluster-preview {
+      max-width: 760px;
+      margin: 1.25rem auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.4rem;
+      text-align: left;
+    }
+    .cluster-preview .cp-head {
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .cluster-preview ul {
+      list-style: none; padding: 0; margin: 0;
+      font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+      line-height: 1.55;
+    }
+    .cluster-preview ul li { display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid var(--border); }
+    .cluster-preview ul li:last-child { border-bottom: none; }
+    .cluster-preview .year { color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.9em; margin-left: 1rem; }
+    .cluster-preview .year.early { color: var(--bad); }
+
+    /* Pivot card (labels before/after) */
+    .pivot {
+      position: relative;
+      min-height: 36vh;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%;
+    }
+    .pivot .before, .pivot .after {
+      transition: opacity 0.9s ease, transform 0.9s ease;
+      width: 100%;
+    }
+    .pivot .before {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .pivot .after {
+      position: absolute;
+      inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0;
+      transform: scale(0.94);
+    }
+    .pivot.flipped .before { opacity: 0; transform: scale(1.06); }
+    .pivot.flipped .after  { opacity: 1; transform: scale(1); }
+
+    /* Final list (the "leave them with this" slide) */
+    .final-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 700px;
+      text-align: left;
+    }
+    .final-list li {
+      padding: 1rem 0 1rem 2.5rem;
+      position: relative;
+      font-size: clamp(1.4rem, 3vw, 2.4rem);
+      line-height: 1.25;
+      font-weight: 600;
+      color: var(--fg);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      border-bottom: 1px solid var(--border);
+    }
+    .final-list li:last-child { border-bottom: none; }
+    .final-list li::before {
+      content: "·";
+      position: absolute; left: 0.6rem; top: 1rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .final-list.show-1 li:nth-child(1),
+    .final-list.show-2 li:nth-child(-n+2),
+    .final-list.show-3 li:nth-child(-n+3),
+    .final-list.show-4 li:nth-child(-n+4) {
+      opacity: 1; transform: none;
+    }
+
+    /* Compare table (k-means cluster-mates) */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem auto 0;
+      max-width: 950px;
+    }
+    .compare .col {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.3rem;
+      text-align: left;
+    }
+    .compare .col h3 {
+      color: var(--accent);
+      margin: 0 0 0.7rem;
+      font-size: clamp(0.92rem, 1.35vw, 1.1rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .compare .col ul {
+      list-style: none; padding: 0; margin: 0;
+      font-size: clamp(0.95rem, 1.55vw, 1.25rem);
+    }
+    .compare .col ul li { padding: 0.35rem 0; border-bottom: 1px solid var(--border); }
+    .compare .col ul li:last-child { border-bottom: none; }
+
+    /* Video frame helper */
+    .video-frame {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0.5rem auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0f1117;
+      display: block;
+    }
+
+    /* HUD */
+    .hud {
+      position: fixed;
+      bottom: 0.85rem; right: 1.2rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-family: ui-monospace, monospace;
+      z-index: 99;
+      opacity: 0.4;
+      transition: opacity 0.3s ease;
+      user-select: none;
+    }
+    body:hover .hud { opacity: 1; }
+    .hud kbd {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.05rem 0.4rem;
+      font-family: inherit; font-size: 0.72rem;
+      margin: 0 0.1rem;
+    }
+    .hud .scene-num { margin-left: 0.85rem; color: var(--accent); }
+
+    @media (max-width: 720px) {
+      .triptych { grid-template-columns: 1fr; }
+      .compare  { grid-template-columns: 1fr; }
+      .pipeline-nav { font-size: 0.6rem; padding: 0.45rem; gap: 0.18rem; }
+      .pipeline-nav .pn-stage { padding: 0.18rem 0.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Persistent pipeline nav -->
+  <nav class="pipeline-nav" id="pipelineNav">
+    <span class="pn-stage" data-pn="raw">raw data</span>
+    <span class="pn-arrow">→</span>
+    <span class="pn-stage" data-pn="encoding">encoding</span>
+    <span class="pn-arrow">→</span>
+    <span class="pn-stage" data-pn="dimred">dim reduction</span>
+    <span class="pn-arrow">→</span>
+    <span class="pn-stage" data-pn="clustering">clustering</span>
+    <span class="pn-arrow">→</span>
+    <span class="pn-stage" data-pn="labels">labels</span>
+    <span class="pn-arrow">→</span>
+    <span class="pn-stage" data-pn="actions">actions</span>
+  </nav>
+
+  <!-- 1 · Title -->
+  <section class="stage section-card active" id="s1" data-stage="hidden">
+    <div class="content">
+      <p class="label">ODSC AI East 2026</p>
+      <h1 class="mega">The Art of <span class="accent">Clustering</span></h1>
+      <p class="big muted" style="margin-top: 1.5rem;">The Good. The Bad. The Beautiful.</p>
+      <p class="small">Seth Levine</p>
+    </div>
+  </section>
+
+  <!-- 2 · Hook -->
+  <section class="stage section-card" id="s2" data-stage="hidden">
+    <div class="content">
+      <p class="big muted" style="margin: 0 auto 1.5rem; max-width: 800px;">Run clustering twice.</p>
+      <p class="huge" style="max-width: 1000px; margin: 0 auto;">Get <span class="accent">two different answers</span>.</p>
+      <p class="big muted" style="max-width: 900px; margin: 2.5rem auto 0;">Clustering doesn't <em>discover</em> structure.<br /><span class="accent">It creates it.</span></p>
+    </div>
+  </section>
+
+  <!-- 3 · Pipeline overview -->
+  <section class="stage" id="s3" data-stage="hidden">
+    <div class="content">
+      <span class="kicker">The map</span>
+      <h2 class="huge">A pipeline of decisions.</h2>
+      <div class="pipeline-full">
+        <span class="pf-stage">raw data</span>
+        <span class="pf-arrow">→</span>
+        <span class="pf-stage">encoding</span>
+        <span class="pf-arrow">→</span>
+        <span class="pf-stage">dim reduction</span>
+        <span class="pf-arrow">→</span>
+        <span class="pf-stage">clustering</span>
+        <span class="pf-arrow">→</span>
+        <span class="pf-stage">labels</span>
+        <span class="pf-arrow">→</span>
+        <span class="pf-stage">actions</span>
+      </div>
+      <p class="big muted" style="margin-top: 1rem;">Every step is a decision about what structure you're <span class="accent">allowed</span> to see.</p>
+    </div>
+  </section>
+
+  <!-- 4 · Raw data — triptych -->
+  <section class="stage" id="s4" data-stage="raw">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · raw data</span></span>
+      <h2 class="huge">What signal exists?</h2>
+      <div class="triptych">
+        <div class="panel good">
+          <span class="panel-tag">The Good</span>
+          <h3>5,000 films from TMDB</h3>
+          <p>Top by vote count. 120 years of cinema. Mixed languages, long-tail metadata.</p>
+          <div class="panel-detail">→ enough breadth for real clusters to form.</div>
+        </div>
+        <div class="panel bad">
+          <span class="panel-tag">The Bad</span>
+          <h3>Junk in, junk out</h3>
+          <p>Sparse metadata, missing overviews, broken IDs. The pipeline can't fix what isn't there.</p>
+          <div class="panel-detail">→ clean before you cluster, not after.</div>
+        </div>
+        <div class="panel beautiful">
+          <span class="panel-tag">The Beautiful</span>
+          <h3>Two views, one film</h3>
+          <p>Overviews <em>and</em> posters. Same dataset, two modalities — clusterable independently or fused.</p>
+          <div class="panel-detail">→ multimodal raw data is a competitive moat.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Encoding — triptych -->
+  <section class="stage" id="s5" data-stage="encoding">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · encoding</span></span>
+      <h2 class="huge">What "similar" means.</h2>
+      <div class="triptych">
+        <div class="panel good">
+          <span class="panel-tag">The Good</span>
+          <h3>Sentence transformers</h3>
+          <p><span class="mono">all-MiniLM-L6-v2</span> · 384-D. Sentence meaning, not bag of words.</p>
+          <div class="panel-detail">→ everything downstream inherits this lift.</div>
+        </div>
+        <div class="panel bad">
+          <span class="panel-tag">The Bad</span>
+          <h3>TF-IDF / bag of words</h3>
+          <p>Lexical overlap masquerading as semantic similarity. <em>Plane crash</em> ≠ <em>airplane disaster</em>.</p>
+          <div class="panel-detail">→ what you encoded was never what you meant.</div>
+        </div>
+        <div class="panel beautiful">
+          <span class="panel-tag">The Beautiful</span>
+          <h3>Multimodal in one space</h3>
+          <p>CLIP encodes text and images into the <em>same</em> 512-D space. Average them per film → fused embedding.</p>
+          <div class="panel-detail">→ a third lens that resolves text/image disagreement.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Dim reduction — Good (UMAP knobs) -->
+  <section class="stage" id="s6" data-stage="dimred">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · dim reduction</span><span class="variant-tag good">The Good</span></span>
+      <h2 class="huge">Two knobs that matter.</h2>
+      <div class="stat-row" style="margin-top: 1.5rem;">
+        <div class="stat">
+          <div class="num mono" style="font-size: clamp(2rem, 4.5vw, 3.4rem);">n_neighbors</div>
+          <div class="lbl">local ↔ global structure</div>
+        </div>
+        <div class="stat">
+          <div class="num mono" style="font-size: clamp(2rem, 4.5vw, 3.4rem);">min_dist</div>
+          <div class="lbl">cluster tightness in the projection</div>
+        </div>
+      </div>
+      <p class="big muted" style="margin-top: 1.5rem;">Sweep them — never set them by memory.</p>
+      <p class="small">→ cue <span class="mono">animation_text.mp4</span> on the index page.</p>
+    </div>
+  </section>
+
+  <!-- 7 · Dim reduction — Bad (distance compression manim) -->
+  <section class="stage" id="s7" data-stage="dimred">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · dim reduction</span><span class="variant-tag bad">The Bad</span></span>
+      <video src="slides/distance_compression.mp4" autoplay loop muted playsinline class="video-frame"></video>
+      <div class="stat-row" style="margin-top: 0.75rem;">
+        <div class="stat">
+          <div class="num">0.47</div>
+          <div class="lbl">raw 384-D · nearest/farthest</div>
+        </div>
+        <div class="stat">
+          <div class="num">0.05</div>
+          <div class="lbl">UMAP 5-D · same ratio</div>
+        </div>
+      </div>
+      <p class="big muted" style="margin-top: 0.5rem;">Skip dim reduction → density-based clustering has nothing to grip.</p>
+    </div>
+  </section>
+
+  <!-- 8 · Clustering — Good (HDBSCAN stats) -->
+  <section class="stage" id="s8" data-stage="clustering">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · clustering</span><span class="variant-tag good">The Good</span></span>
+      <h2 class="huge">No <em>k</em>. Density-based.</h2>
+      <div class="stat-row" style="margin-top: 1.75rem;">
+        <div class="stat">
+          <div class="num">47</div>
+          <div class="lbl">natural clusters</div>
+        </div>
+        <div class="stat">
+          <div class="num">48.5%</div>
+          <div class="lbl">noise — labelled <span class="mono">−1</span> by design</div>
+        </div>
+      </div>
+      <p class="big muted" style="margin-top: 1.5rem;">Half the catalog doesn't fit a tight theme.<br />That's <span class="accent">honest</span>, not a failure.</p>
+    </div>
+  </section>
+
+  <!-- 9 · Clustering — Bad (k-means + instability) -->
+  <section class="stage" id="s9" data-stage="clustering">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · clustering</span><span class="variant-tag bad">The Bad</span></span>
+      <h2 class="huge"><em>Inception</em>'s neighbors.</h2>
+      <div class="compare">
+        <div class="col">
+          <h3>k = 5</h3>
+          <ul>
+            <li>Shawshank Redemption</li>
+            <li>Django Unchained</li>
+            <li>Deadpool</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>k = 80</h3>
+          <ul>
+            <li>Fight Club</li>
+            <li>Kingsman</li>
+            <li>Matrix Reloaded</li>
+          </ul>
+        </div>
+      </div>
+      <p class="big muted" style="margin-top: 1.25rem;">Same data. Different knob. Different story.<br /><span class="accent">If the story changes with a knob turn, the story isn't about the data.</span></p>
+    </div>
+  </section>
+
+  <!-- 10 · Clustering — Beautiful · setup (canonical members) -->
+  <section class="stage" id="s10" data-stage="clustering">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · clustering</span><span class="variant-tag beautiful">The Beautiful</span></span>
+      <h2 class="huge">Claude labelled this cluster<br /><span class="mono accent">"WWII &amp; Nazi Germany."</span></h2>
+      <div class="cluster-preview" style="max-width: 620px;">
+        <div class="cp-head">A few of its 1,063 films</div>
+        <ul>
+          <li><span>Dunkirk</span><span class="year">2017</span></li>
+          <li><span>Schindler's List</span><span class="year">1993</span></li>
+          <li><span>The Bridge on the River Kwai</span><span class="year">1957</span></li>
+          <li><span>Casablanca</span><span class="year">1942</span></li>
+        </ul>
+      </div>
+      <p class="big muted" style="margin-top: 1.5rem;">Looks right.</p>
+    </div>
+  </section>
+
+  <!-- 10b · Clustering — Beautiful · reveal -->
+  <section class="stage" id="s10b" data-stage="clustering">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · clustering</span><span class="variant-tag beautiful">The Beautiful</span> · reveal</span>
+      <h2 class="huge">Now look at the rest of it.</h2>
+      <div class="cluster-preview" style="max-width: 720px;">
+        <div class="cp-head">Same cluster · earlier films</div>
+        <ul>
+          <li><span>Grand Illusion</span><span class="year early">1937</span></li>
+          <li><span>Triumph of the Will</span><span class="year early">1935</span></li>
+          <li><span>Westfront 1918</span><span class="year early">1930</span></li>
+          <li><span>Wings</span><span class="year early">1927</span></li>
+          <li><span>The Big Parade</span><span class="year early">1925</span></li>
+          <li><span>I Accuse</span><span class="year early">1919</span></li>
+          <li><span>Red Cross Ambulance on Battlefield</span><span class="year early">1900</span></li>
+        </ul>
+      </div>
+      <div class="stat-row" style="margin-top: 0.75rem;">
+        <div class="stat">
+          <div class="num">134</div>
+          <div class="lbl">released before WWII</div>
+        </div>
+        <div class="stat">
+          <div class="num">97</div>
+          <div class="lbl">before Hitler took power</div>
+        </div>
+        <div class="stat">
+          <div class="num">22</div>
+          <div class="lbl">before WWI even began</div>
+        </div>
+      </div>
+      <p class="big" style="margin-top: 1rem;">It isn't a WWII cluster. It's a <span class="accent">war-shaped</span> cluster.</p>
+      <p class="small">Clustering captures meaning — not metadata.</p>
+    </div>
+  </section>
+
+  <!-- 11 · The Distinction (use_cases manim) -->
+  <section class="stage" id="s11" data-stage="clustering">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">The critical distinction</span></span>
+      <video src="slides/use_cases.mp4" autoplay loop muted playsinline class="video-frame"></video>
+      <p class="big muted" style="margin-top: 0.75rem; max-width: 950px; margin-left: auto; margin-right: auto;">
+        Are you clustering to <span class="accent">understand</span> your data,<br />or to <span class="accent">generate labels</span> for a system?
+      </p>
+    </div>
+  </section>
+
+  <!-- 12 · Sketch vs Blueprint -->
+  <section class="stage" id="s12" data-stage="hidden">
+    <div class="content">
+      <video src="slides/sketch_blueprint.mp4" autoplay loop muted playsinline class="video-frame"></video>
+      <p class="big muted" style="margin-top: 0.75rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+        Clustering → discover structure.<br />Classification → scale it.
+      </p>
+    </div>
+  </section>
+
+  <!-- 13 · Labels — pivot -->
+  <section class="stage" id="s13" data-stage="labels">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · labels</span> · the pivot</span>
+      <div class="pivot" id="pivotCard">
+        <div class="before">
+          <p class="med muted" style="margin-bottom: 1rem;">What BERTopic shipped for years:</p>
+          <p class="huge mono muted" style="font-size: clamp(1.3rem, 3vw, 2.2rem);">
+            0_planet_earth_space_alien<br />
+            3_queen_prince_princess_king<br />
+            4_heist_bank_drug_police
+          </p>
+        </div>
+        <div class="after">
+          <p class="med accent" style="margin-bottom: 1rem;">The same clusters, re-labelled by Claude:</p>
+          <p class="huge accent">
+            Space sci-fi<br />
+            Royalty &amp; fairy tales<br />
+            Neo-noir crime
+          </p>
+        </div>
+      </div>
+      <p class="big muted" style="margin-top: 1.5rem;">Nothing in the pipeline got smarter.<br /><span class="accent">The labelling layer did.</span></p>
+    </div>
+  </section>
+
+  <!-- 14 · Actions — Good (genre purity) -->
+  <section class="stage" id="s14" data-stage="actions">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · actions</span><span class="variant-tag good">The Good</span></span>
+      <h2 class="huge">Does it carry signal?</h2>
+      <div class="stat-row" style="margin-top: 1.75rem;">
+        <div class="stat">
+          <div class="num">0.38</div>
+          <div class="lbl">genre purity · our clusters</div>
+        </div>
+        <div class="stat">
+          <div class="num" style="color: var(--muted);">0.19</div>
+          <div class="lbl">random baseline</div>
+        </div>
+      </div>
+      <p class="big muted" style="margin-top: 1.5rem;">~2× the signal of chance — and these clusters were never told what genre is.</p>
+    </div>
+  </section>
+
+  <!-- 15 · Actions — Beautiful (clustering → classification) -->
+  <section class="stage" id="s15" data-stage="actions">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · actions</span><span class="variant-tag beautiful">The Beautiful</span></span>
+      <h2 class="huge">Hand off to scale.</h2>
+      <p class="big muted" style="margin-top: 1.25rem; max-width: 950px; margin-left: auto; margin-right: auto;">
+        Clustering finds the structure.<br />Classification — trained on the labels you wrote — applies it to the next 10 million rows.
+      </p>
+      <p class="big" style="margin-top: 2rem;">
+        <span class="accent">Cluster to discover</span> · <span class="muted">→</span> · <span class="accent">classify to deploy</span>.
+      </p>
+    </div>
+  </section>
+
+  <!-- 16 · Closing line -->
+  <section class="stage section-card" id="s16" data-stage="hidden">
+    <div class="content">
+      <p class="big muted" style="max-width: 900px; margin: 0 auto 2rem;">You're not discovering structure.</p>
+      <p class="huge accent" style="max-width: 1100px; margin: 0 auto;">
+        You're <span style="text-decoration: underline; text-decoration-color: var(--accent-dim); text-decoration-thickness: 4px; text-underline-offset: 8px;">designing</span> a perspective.
+      </p>
+    </div>
+  </section>
+
+  <!-- 17 · Final list -->
+  <section class="stage section-card" id="s17" data-stage="hidden">
+    <div class="content">
+      <p class="kicker" style="margin-bottom: 1.5rem;">Take these home</p>
+      <ol class="final-list" id="finalList">
+        <li>Clusters ≠ truth</li>
+        <li>Instability is signal</li>
+        <li>Exploration ≠ labeling</li>
+        <li>The goal is decisions</li>
+      </ol>
+      <p class="small" style="margin-top: 2.5rem;">Thank you · <span class="mono">github.com/splevine/clustering-good-bad-beautiful</span></p>
+    </div>
+  </section>
+
+  <div class="hud">
+    <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>esc</kbd> exit
+    <span class="scene-num" id="sceneNum">1 / 18</span>
+  </div>
+
+  <script>
+    const stages = Array.from(document.querySelectorAll(".stage"));
+    const pipelineNav = document.getElementById("pipelineNav");
+    const pnStages = pipelineNav.querySelectorAll(".pn-stage");
+    const sceneNum = document.getElementById("sceneNum");
+    let idx = 0;
+
+    function updatePipelineNav(stageEl) {
+      const target = stageEl.getAttribute("data-stage");
+      if (target === "hidden") {
+        pipelineNav.classList.add("hidden");
+        return;
+      }
+      pipelineNav.classList.remove("hidden");
+      pnStages.forEach(s => s.classList.toggle("lit", s.getAttribute("data-pn") === target));
+    }
+
+    function activate(i) {
+      stages.forEach((s, j) => s.classList.toggle("active", i === j));
+      idx = i;
+      sceneNum.textContent = `${i + 1} / ${stages.length}`;
+      updatePipelineNav(stages[i]);
+      runScene(i);
+    }
+
+    // Scene 13 · labels pivot — space-advance within scene
+    let pivotShown = false;
+    function pivotAdvance() {
+      document.getElementById("pivotCard").classList.add("flipped");
+      pivotShown = true;
+    }
+    function pivotReset() {
+      document.getElementById("pivotCard").classList.remove("flipped");
+      pivotShown = false;
+    }
+
+    // Scene 17 · final list — space-advance one bullet at a time
+    let finalStep = 0;
+    function finalAdvance() {
+      finalStep = Math.min(finalStep + 1, 4);
+      const el = document.getElementById("finalList");
+      el.classList.remove("show-1", "show-2", "show-3", "show-4");
+      if (finalStep > 0) el.classList.add("show-" + finalStep);
+    }
+    function finalBack() {
+      if (finalStep <= 0) return false;
+      finalStep--;
+      const el = document.getElementById("finalList");
+      el.classList.remove("show-1", "show-2", "show-3", "show-4");
+      if (finalStep > 0) el.classList.add("show-" + finalStep);
+      return true;
+    }
+
+    function runScene(i) {
+      const stage = stages[i];
+      if (stage.id === "s13") pivotReset();
+      if (stage.id === "s17") {
+        finalStep = 0;
+        document.getElementById("finalList").classList.remove("show-1", "show-2", "show-3", "show-4");
+      }
+      // Restart any video on this slide so loops sync to the slide entry
+      stage.querySelectorAll("video").forEach(v => { try { v.currentTime = 0; v.play(); } catch (e) {} });
+    }
+
+    const keys = { next: ["Space", "ArrowRight", "KeyN", "Enter"], prev: ["ArrowLeft", "KeyP", "Backspace"] };
+    window.addEventListener("keydown", (e) => {
+      if (keys.next.includes(e.code)) {
+        e.preventDefault();
+        const cur = stages[idx];
+        if (cur.id === "s13" && !pivotShown) {
+          pivotAdvance();
+        } else if (cur.id === "s17" && finalStep < 4) {
+          finalAdvance();
+        } else if (idx < stages.length - 1) {
+          activate(idx + 1);
+        }
+      } else if (keys.prev.includes(e.code)) {
+        e.preventDefault();
+        const cur = stages[idx];
+        if (cur.id === "s13" && pivotShown) {
+          pivotReset();
+        } else if (cur.id === "s17" && finalBack()) {
+          // stayed within scene
+        } else if (idx > 0) {
+          activate(idx - 1);
+        }
+      } else if (e.code === "Escape") {
+        window.location.href = "index.html";
+      }
+    });
+    window.addEventListener("mousemove", () => document.body.classList.add("show-cursor"));
+
+    // Init
+    activate(0);
+  </script>
+</body>
+</html>
