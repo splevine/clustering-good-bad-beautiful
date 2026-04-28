@@ -232,7 +232,7 @@ def build_interactive(movies, X, layer_labels, out_path: Path, title: str, sub_t
         search_field="title",
         enable_topic_tree=True,
         cluster_layer_colormaps=True,
-        histogram_data=movies["release_year"].fillna(0).astype(int),
+        histogram_data=pd.to_datetime(movies["release_year"], format="%Y", errors="coerce"),
         histogram_n_bins=30,
         histogram_settings={
             "histogram_title": "Release year",
