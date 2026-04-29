@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Slides · The Art of Clustering</title>
   <meta name="description" content="Presentation deck — pipeline-stage walkthrough with Good / Bad / Beautiful framings." />
+  <link rel="prefetch" href="open.html" />
+  <link rel="prefetch" href="close.html" />
   <style>
     :root {
       --bg: #0f1117;
@@ -25,8 +27,9 @@
       font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
       overflow: hidden;
     }
-    body { cursor: none; }
+    body { cursor: none; transition: opacity 0.3s ease; }
     body.show-cursor { cursor: default; }
+    body.fading { opacity: 0; }
 
     /* Pipeline nav — persistent across stage slides */
     .pipeline-nav {
@@ -741,7 +744,7 @@
 
   <div class="hud">
     <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>esc</kbd> exit
-    <span class="scene-num" id="sceneNum">1 / 18</span>
+    <span class="scene-num" id="sceneNum">Slides · 1/18</span>
   </div>
 
   <script>
@@ -764,9 +767,14 @@
     function activate(i) {
       stages.forEach((s, j) => s.classList.toggle("active", i === j));
       idx = i;
-      sceneNum.textContent = `${i + 1} / ${stages.length}`;
+      sceneNum.textContent = `Slides · ${i + 1}/${stages.length}`;
       updatePipelineNav(stages[i]);
       runScene(i);
+    }
+
+    function fadeAndGo(href) {
+      document.body.classList.add("fading");
+      setTimeout(() => { window.location.href = href; }, 300);
     }
 
     // Scene 13 · labels pivot — space-advance within scene
@@ -819,6 +827,8 @@
           finalAdvance();
         } else if (idx < stages.length - 1) {
           activate(idx + 1);
+        } else {
+          fadeAndGo("close.html");
         }
       } else if (keys.prev.includes(e.code)) {
         e.preventDefault();
@@ -829,6 +839,8 @@
           // stayed within scene
         } else if (idx > 0) {
           activate(idx - 1);
+        } else {
+          fadeAndGo("open.html?scene=last");
         }
       } else if (e.code === "Escape") {
         window.location.href = "index.html";
@@ -836,8 +848,10 @@
     });
     window.addEventListener("mousemove", () => document.body.classList.add("show-cursor"));
 
-    // Init
-    activate(0);
+    // Init — honor ?scene=last for backward boundary entry from close.html
+    const startParams = new URLSearchParams(location.search);
+    const startIdx = startParams.get("scene") === "last" ? stages.length - 1 : 0;
+    activate(startIdx);
   </script>
 </body>
 </html>

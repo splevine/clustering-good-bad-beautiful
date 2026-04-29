@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Open · Clustering</title>
   <meta name="description" content="Presentation mode · opener." />
+  <link rel="prefetch" href="slides.html" />
   <style>
     :root {
       --bg: #0f1117;
@@ -22,8 +23,9 @@
       font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
       overflow: hidden;
     }
-    body { cursor: none; }
+    body { cursor: none; transition: opacity 0.3s ease; }
     body.show-cursor { cursor: default; }
+    body.fading { opacity: 0; }
 
     .stage {
       position: fixed; inset: 0;
@@ -232,6 +234,7 @@
       font-family: inherit; font-size: 0.75rem;
       margin: 0 0.1rem;
     }
+    .hud .scene-num { margin-left: 0.85rem; color: var(--accent); }
   </style>
 </head>
 <body>
@@ -309,16 +312,24 @@
 
   <div class="hud">
     <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>esc</kbd> exit
+    <span class="scene-num" id="sceneNum">Open · 1/5</span>
   </div>
 
   <script>
     const stages = Array.from(document.querySelectorAll(".stage"));
+    const sceneNum = document.getElementById("sceneNum");
     let idx = 0;
 
     function activate(i) {
       stages.forEach((s, j) => s.classList.toggle("active", i === j));
       idx = i;
+      if (sceneNum) sceneNum.textContent = `Open · ${i + 1}/${stages.length}`;
       runScene(i);
+    }
+
+    function fadeAndGo(href) {
+      document.body.classList.add("fading");
+      setTimeout(() => { window.location.href = href; }, 300);
     }
 
     const keys = { next: ["Space", "ArrowRight", "KeyN", "Enter"], prev: ["ArrowLeft", "KeyP", "Backspace"] };
@@ -328,6 +339,7 @@
         const cur = stages[idx];
         if (cur.id === "s3" && s3Step < 4) { s3Advance(); }
         else if (idx < stages.length - 1) { activate(idx + 1); }
+        else { fadeAndGo("slides.html"); }
       } else if (keys.prev.includes(e.code)) {
         e.preventDefault();
         const cur = stages[idx];
@@ -335,6 +347,7 @@
           cur.classList.remove("show-" + s3Step);
           s3Step--;
         } else if (idx > 0) { activate(idx - 1); }
+        // open.html is the first file; no backward boundary.
       } else if (e.code === "Escape") { window.location.href = "index.html"; }
     });
     window.addEventListener("mousemove", () => document.body.classList.add("show-cursor"));
@@ -447,8 +460,10 @@
       }
     }
 
-    // Kick off scene 1
-    runScene(0);
+    // Kick off — honor ?scene=last for backward boundary entry from slides.html
+    const startParams = new URLSearchParams(location.search);
+    const startIdx = startParams.get("scene") === "last" ? stages.length - 1 : 0;
+    activate(startIdx);
   </script>
 </body>
 </html>
