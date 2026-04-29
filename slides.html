@@ -495,7 +495,7 @@
         <div class="panel bad">
           <span class="panel-tag">The Bad</span>
           <h3>TF-IDF / bag of words</h3>
-          <p>Lexical overlap masquerading as semantic similarity. <em>Plane crash</em> ≠ <em>airplane disaster</em>.</p>
+          <p>Surface tokens, not meaning. <em>Hitman</em> and <em>assassin</em> share zero words — TF-IDF can't see they mean the same thing.</p>
           <div class="panel-detail">→ what you encoded was never what you meant.</div>
         </div>
         <div class="panel beautiful">
@@ -508,23 +508,24 @@
     </div>
   </section>
 
-  <!-- 6 · Dim reduction — Good (UMAP knobs) -->
+  <!-- 6 · Dim reduction — Good (UMAP knob sweep) -->
   <section class="stage" id="s6" data-stage="dimred">
     <div class="content">
       <span class="kicker"><span class="stage-label">Stage · dim reduction</span><span class="variant-tag good">The Good</span></span>
       <h2 class="huge">Two knobs that matter.</h2>
-      <div class="stat-row" style="margin-top: 1.5rem;">
-        <div class="stat">
-          <div class="num mono" style="font-size: clamp(2rem, 4.5vw, 3.4rem);">n_neighbors</div>
-          <div class="lbl">local ↔ global structure</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin: 1.25rem auto 0; max-width: 1100px;">
+        <div>
+          <div style="color: var(--muted); font-size: 0.95rem; margin-bottom: 0.4rem; text-align: left;"><code class="mono accent">n_neighbors</code> · 2 → 60 → 2 · local ↔ global</div>
+          <video src="animation_text.mp4" autoplay loop muted playsinline preload="metadata"
+            style="width: 100%; border: 1px solid var(--border); border-radius: 10px; background: black; display: block;"></video>
         </div>
-        <div class="stat">
-          <div class="num mono" style="font-size: clamp(2rem, 4.5vw, 3.4rem);">min_dist</div>
-          <div class="lbl">cluster tightness in the projection</div>
+        <div>
+          <div style="color: var(--muted); font-size: 0.95rem; margin-bottom: 0.4rem; text-align: left;"><code class="mono accent">min_dist</code> · 0.0 → 0.8 → 0.0 · tight ↔ spread</div>
+          <video src="animation_text_min_dist.mp4" autoplay loop muted playsinline preload="metadata"
+            style="width: 100%; border: 1px solid var(--border); border-radius: 10px; background: black; display: block;"></video>
         </div>
       </div>
-      <p class="big muted" style="margin-top: 1.5rem;">Sweep them — never set them by memory.</p>
-      <p class="small">→ cue <span class="mono">animation_text.mp4</span> on the index page.</p>
+      <p class="big muted" style="margin-top: 0.85rem;">Sweep — never set them by memory.</p>
     </div>
   </section>
 
@@ -711,6 +712,19 @@
     </div>
   </section>
 
+  <!-- 13b · Labels payoff at scale — live map.html demo -->
+  <section class="stage" id="s13b" data-stage="labels">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Stage · labels · the lift at scale</span></span>
+      <iframe
+        src="map.html"
+        title="5,000 films · thematic hierarchy"
+        style="width: 100%; height: 620px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); margin: 0.5rem auto;"
+      ></iframe>
+      <p class="big muted" style="margin-top: 0.5rem;">5 zoom levels · search any title · click any point to open on TMDB.</p>
+    </div>
+  </section>
+
   <!-- 14 · Actions — Good (genre purity) -->
   <section class="stage" id="s14" data-stage="actions">
     <div class="content">
@@ -744,6 +758,34 @@
     </div>
   </section>
 
+  <!-- 15b · Visual payoff — poster constellation -->
+  <section class="stage" id="s15b" data-stage="encoding">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Same pipeline · CLIP instead of MiniLM</span></span>
+      <h2 class="huge">The poster constellation.</h2>
+      <iframe
+        src="map_posters.html"
+        title="Poster constellation"
+        style="width: 100%; height: 580px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); margin: 0.5rem auto;"
+      ></iframe>
+      <p class="big muted" style="margin-top: 0.5rem;">Each point is the actual poster at its UMAP coordinate.</p>
+    </div>
+  </section>
+
+  <!-- 15c · Visual payoff — 3D cosmos -->
+  <section class="stage" id="s15c" data-stage="hidden">
+    <div class="content">
+      <span class="kicker"><span class="stage-label">Same pipeline · in 3D</span></span>
+      <h2 class="huge">The poster cosmos.</h2>
+      <iframe
+        src="cosmos.html"
+        title="3D poster cosmos"
+        style="width: 100%; height: 600px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); margin: 0.5rem auto;"
+      ></iframe>
+      <p class="big muted" style="margin-top: 0.5rem;">1,000 films · auto-rotates until you grab the camera.</p>
+    </div>
+  </section>
+
   <!-- 16 · Closing line -->
   <section class="stage section-card" id="s16" data-stage="hidden">
     <div class="content">
@@ -770,7 +812,7 @@
 
   <div class="hud">
     <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>esc</kbd> exit
-    <span class="scene-num" id="sceneNum">Slides · 1/19</span>
+    <span class="scene-num" id="sceneNum">Slides · 1/22</span>
   </div>
 
   <script>
