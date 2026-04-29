@@ -178,9 +178,11 @@
 
     /* SCENE 5 — pipeline */
     #s5 .pipeline {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 0.6rem;
-      margin: 3rem 0 2rem;
+      display: flex; flex-wrap: wrap;
+      justify-content: center; align-items: center;
+      gap: 0.55rem;
+      margin: 3rem auto 2rem;
+      max-width: 1100px;
     }
     #s5 .stage-box {
       padding: 0.9rem 1.2rem;
@@ -189,6 +191,7 @@
       background: #1c1f29;
       font-size: clamp(0.9rem, 1.3vw, 1.15rem);
       font-weight: 500;
+      line-height: 1.2;
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.4s ease, background 0.4s ease, color 0.4s ease;
@@ -200,11 +203,15 @@
       color: var(--accent);
     }
     #s5 .arrow {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      width: 1.4rem; height: 1.4rem;
       color: var(--accent);
-      font-size: 1.3rem; line-height: 1;
-      opacity: 0; transition: opacity 0.4s ease;
+      font-size: 1.4rem; line-height: 1;
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
-    #s5 .arrow.shown { opacity: 0.65; }
+    #s5 .arrow.shown { opacity: 0.7; }
     #s5 .go {
       margin-top: 2rem;
       color: var(--accent);
@@ -235,11 +242,20 @@
       margin: 0 0.1rem;
     }
     .hud .scene-num { margin-left: 0.85rem; color: var(--accent); }
+    .odsc-badge {
+      position: absolute;
+      top: 1.5rem; right: 1.75rem;
+      height: 56px; width: auto;
+      opacity: 0.9;
+      z-index: 5;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
   <!-- SCENE 1 — "What's in here?" -->
   <section class="stage active" id="s1">
+    <img src="assets/odsc-east-2026.png" alt="ODSC East 2026" class="odsc-badge" />
     <div class="content">
       <p class="big muted">In machine learning, there is one question you can't answer with a prediction.</p>
       <h1 class="mega">What's in <span class="accent">here</span>?<span class="cursor">&nbsp;</span></h1>
