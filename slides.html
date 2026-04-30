@@ -533,7 +533,7 @@
   <section class="stage" id="s7" data-stage="dimred">
     <div class="content">
       <span class="kicker"><span class="stage-label">Stage · dim reduction</span><span class="variant-tag bad">The Bad</span></span>
-      <video src="slides/distance_compression.mp4" autoplay loop muted playsinline class="video-frame"></video>
+      <video src="slides/distance_compression.mp4" autoplay loop muted playsinline preload="auto" class="video-frame"></video>
       <div class="stat-row" style="margin-top: 0.75rem;">
         <div class="stat">
           <div class="num">0.47</div>
@@ -669,7 +669,7 @@
   <section class="stage" id="s11" data-stage="clustering">
     <div class="content">
       <span class="kicker"><span class="stage-label">The critical distinction</span></span>
-      <video src="slides/use_cases.mp4" autoplay loop muted playsinline class="video-frame"></video>
+      <video src="slides/use_cases.mp4" autoplay loop muted playsinline preload="auto" class="video-frame"></video>
       <p class="big muted" style="margin-top: 0.75rem; max-width: 950px; margin-left: auto; margin-right: auto;">
         Are you clustering to <span class="accent">understand</span> your data,<br />or to <span class="accent">generate labels</span> for a system?
       </p>
@@ -679,7 +679,7 @@
   <!-- 12 · Sketch vs Blueprint -->
   <section class="stage" id="s12" data-stage="hidden">
     <div class="content">
-      <video src="slides/sketch_blueprint.mp4" autoplay loop muted playsinline class="video-frame"></video>
+      <video src="slides/sketch_blueprint.mp4" autoplay loop muted playsinline preload="auto" class="video-frame"></video>
       <p class="big muted" style="margin-top: 0.75rem; max-width: 900px; margin-left: auto; margin-right: auto;">
         Clustering → discover structure.<br />Classification → scale it.
       </p>
@@ -845,6 +845,25 @@
       setTimeout(() => { window.location.href = href; }, 300);
     }
 
+    // Browsers gate <video autoplay> behind a user gesture per page. Once
+    // the user presses any key, prime every video on the page (play+pause)
+    // so when they hit a scene with a video, autoplay just works.
+    let videosWarmed = false;
+    function warmVideos() {
+      if (videosWarmed) return;
+      videosWarmed = true;
+      document.querySelectorAll("video").forEach(v => {
+        v.muted = true;
+        const p = v.play();
+        if (p && typeof p.then === "function") {
+          p.then(() => {
+            const stage = v.closest(".stage");
+            if (!stage || !stage.classList.contains("active")) v.pause();
+          }).catch(() => {});
+        }
+      });
+    }
+
     // Scene 13 · labels pivot — space-advance within scene
     let pivotShown = false;
     function pivotAdvance() {
@@ -886,6 +905,7 @@
 
     const keys = { next: ["Space", "ArrowRight", "KeyN", "Enter"], prev: ["ArrowLeft", "KeyP", "Backspace"] };
     window.addEventListener("keydown", (e) => {
+      warmVideos();
       if (keys.next.includes(e.code)) {
         e.preventDefault();
         const cur = stages[idx];

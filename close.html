@@ -107,6 +107,76 @@
     #s3.show-2 .t2 { opacity: 1; transform: none; }
     #s3 .t2 { margin-top: 0.4rem; }
 
+    /* SCENE 3b · libraries shoutout */
+    #s3b .libs-head {
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: clamp(0.78rem, 1.1vw, 0.95rem);
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    #s3b .libs-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin: 0 0 2rem;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+    }
+    #s3b.show .libs-head,
+    #s3b.show .libs-title { opacity: 1; transform: none; }
+    #s3b .libs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    #s3b .lib {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1.1rem;
+      background: rgba(23, 26, 34, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    #s3b.show .lib {
+      opacity: 1;
+      transform: none;
+      transition-delay: calc(var(--i, 0) * 0.06s + 0.4s);
+    }
+    #s3b .lib-icon {
+      width: 30px; height: 30px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+    #s3b .lib-mono {
+      width: 30px; height: 30px;
+      flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(255, 180, 84, 0.12);
+      color: var(--accent);
+      border-radius: 7px;
+      font-family: ui-monospace, monospace;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    #s3b .lib-name { font-size: 0.92rem; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    @media (max-width: 900px) {
+      #s3b .libs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
     /* SCENE 4 · CTA */
     #s4 .content {
       display: flex; flex-direction: column; align-items: center; gap: 2rem;
@@ -282,6 +352,35 @@
     </div>
   </section>
 
+  <!-- SCENE 3b · libraries shoutout -->
+  <section class="stage" id="s3b">
+    <div class="content">
+      <p class="libs-head">Built with</p>
+      <h2 class="libs-title">Open source — <span class="accent">all of it.</span></h2>
+      <div class="libs-grid">
+        <div class="lib" style="--i:1"><img class="lib-icon" src="https://cdn.simpleicons.org/huggingface/FFD21E" alt="" /><span class="lib-name">Hugging Face</span></div>
+        <div class="lib" style="--i:2"><img class="lib-icon" src="https://cdn.simpleicons.org/pytorch/EE4C2C" alt="" /><span class="lib-name">PyTorch</span></div>
+        <div class="lib" style="--i:3"><img class="lib-icon" src="https://cdn.simpleicons.org/scikitlearn/F7931E" alt="" /><span class="lib-name">scikit-learn</span></div>
+        <div class="lib" style="--i:4"><img class="lib-icon" src="https://cdn.simpleicons.org/anthropic/D97757" alt="" /><span class="lib-name">Anthropic Claude</span></div>
+
+        <div class="lib" style="--i:5"><img class="lib-icon" src="https://cdn.simpleicons.org/pandas/150458" alt="" /><span class="lib-name">pandas</span></div>
+        <div class="lib" style="--i:6"><img class="lib-icon" src="https://cdn.simpleicons.org/numpy/4D77CF" alt="" /><span class="lib-name">NumPy</span></div>
+        <div class="lib" style="--i:7"><img class="lib-icon" src="https://cdn.simpleicons.org/jupyter/F37626" alt="" /><span class="lib-name">JupyterLab</span></div>
+        <div class="lib" style="--i:8"><span class="lib-mono">★</span><span class="lib-name">TMDB</span></div>
+
+        <div class="lib" style="--i:9"><span class="lib-mono">U</span><span class="lib-name">UMAP</span></div>
+        <div class="lib" style="--i:10"><span class="lib-mono">H</span><span class="lib-name">HDBSCAN</span></div>
+        <div class="lib" style="--i:11"><span class="lib-mono">B</span><span class="lib-name">BERTopic</span></div>
+        <div class="lib" style="--i:12"><span class="lib-mono">·</span><span class="lib-name">datamapplot</span></div>
+
+        <div class="lib" style="--i:13"><img class="lib-icon" src="https://cdn.simpleicons.org/plotly/3F4F75" alt="" /><span class="lib-name">Plotly</span></div>
+        <div class="lib" style="--i:14"><img class="lib-icon" src="https://cdn.simpleicons.org/python/3776AB" alt="" /><span class="lib-name">Matplotlib</span></div>
+        <div class="lib" style="--i:15"><span class="lib-mono">M</span><span class="lib-name">Manim</span></div>
+        <div class="lib" style="--i:16"><span class="lib-mono">E</span><span class="lib-name">EVoC</span></div>
+      </div>
+    </div>
+  </section>
+
   <!-- SCENE 4 · CTA -->
   <section class="stage" id="s4">
     <img src="assets/odsc-east-2026.png" alt="ODSC East 2026" class="odsc-badge" />
@@ -305,7 +404,7 @@
 
   <div class="hud">
     <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>esc</kbd> exit
-    <span class="scene-num" id="sceneNum">Close · 1/4</span>
+    <span class="scene-num" id="sceneNum">Close · 1/5</span>
   </div>
 
   <script>
@@ -376,15 +475,25 @@
       }, t));
     }
 
+    // --- SCENE 3b · libraries shoutout ---
+    function s3bReveal() {
+      setTimeout(() => {
+        const el = document.getElementById("s3b");
+        if (stages[idx] === el) el.classList.add("show");
+      }, 200);
+    }
+
     // --- SCENE 4 · CTA ---
     function s4Reveal() {
-      setTimeout(() => { if (idx === 3) document.getElementById("s4").classList.add("show-1"); }, 400);
+      const s4 = document.getElementById("s4");
+      setTimeout(() => { if (stages[idx] === s4) s4.classList.add("show-1"); }, 400);
     }
 
     function runScene(i) {
       // Clear scene-state that isn't this one
       document.getElementById("s2").classList.remove("show-1", "show-2", "show-3");
       document.getElementById("s3").classList.remove("show-1", "show-2");
+      document.getElementById("s3b").classList.remove("show");
       document.getElementById("s4").classList.remove("show-1");
       stopMontage();
 
@@ -392,6 +501,7 @@
       if (stage.id === "s1") startMontage();
       if (stage.id === "s2") s2Reveal();
       if (stage.id === "s3") s3Reveal();
+      if (stage.id === "s3b") s3bReveal();
       if (stage.id === "s4") s4Reveal();
     }
 

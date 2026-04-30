@@ -7,8 +7,8 @@
 
 ```
 open.html  →  slides.html  →  close.html
-   5 scenes      22 scenes        4 scenes
-   ~3 min        ~16 min          ~2 min
+   5 scenes      22 scenes        5 scenes
+   ~3 min        ~16 min          ~2:30
 ```
 
 `space` at the last scene of each file fades to black and loads the next. `←` at scene 1 fades back to the previous file's last scene. `esc` from anywhere returns to `index.html`.
@@ -172,7 +172,7 @@ Last space → fade → load `close.html`.
 
 ---
 
-## 2 · Close (`close.html` — 2 min)
+## 2 · Close (`close.html` — ~2:30)
 
 ### S1 · Montage (45s — auto-cycling 4 clips)
 - `animation_text.mp4` → "Sweep, don't set."
@@ -187,9 +187,13 @@ Last space → fade → load `close.html`.
 - *"Clustering is a pipeline, not a button."*
 - *"And every stage has an LLM-era upgrade you might not be using yet."*
 
+### S3b · Built with — open source shoutout (30s, staggered fade-in)
+- 16 library tiles fade in with a staggered cascade: Hugging Face, PyTorch, scikit-learn, Anthropic Claude · pandas, NumPy, JupyterLab, TMDB · UMAP, HDBSCAN, BERTopic, datamapplot · Plotly, Matplotlib, Manim, EVoC.
+- *"None of this exists without these. Standing on the shoulders of giants."*
+
 ### S4 · Thanks + QR (30s + Q&A)
-- **Thank you.** · Seth Levine · Lead ML Scientist, Loris.ai
-- QR code → `github.com/splevine/clustering-good-bad-beautiful`
+- **Thank you.** · Seth Levine · Director of AI Innovation, Contentsquare.
+- QR code → `github.com/splevine/clustering-good-bad-beautiful`.
 - Easter egg: press **`c`** for a poster swarm — only deploy if Q&A is friendly and time allows.
 
 ---
