@@ -88,6 +88,18 @@
       }
       .podcast-card h3 { margin: 0 0 0.4rem; font-size: 1.15rem; }
       .podcast-card p { margin: 0 0 1rem; color: var(--muted); font-size: 0.95rem; }
+      .article {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.15rem;
+        margin-bottom: 0.85rem;
+      }
+      .article h3 { margin: 0 0 0.3rem; font-size: 1.02rem; }
+      .article h3 a { border-bottom: none; }
+      .article h3 a:hover { border-bottom: 1px solid var(--accent); }
+      .article .source { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.4rem; }
+      .article p { margin: 0; color: var(--muted); font-size: 0.92rem; }
       .podcast-links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
       .podcast-links a {
         display: inline-block;
@@ -139,6 +151,20 @@
           <div class="speaker">Maarten Grootendorst</div>
           <p>BERTopic's author walking through the design: embeddings → UMAP → HDBSCAN → c-TF-IDF. The "modern pipeline" argument in The Good traces back to this framing.</p>
         </div>
+      </div>
+
+      <h2>Articles &amp; benchmarks</h2>
+
+      <div class="article">
+        <h3><a href="https://github.com/Dima806/clustering_arena">clustering_arena</a></h3>
+        <div class="source">Dima Shulga · GitHub</div>
+        <p>Head-to-head comparison of clustering algorithms on selected real-world datasets, with ground-truth labels. The kind of benchmark that makes the case in The Bad concrete — k-means doesn't just lose by a hair, it lands on the wrong structure.</p>
+      </div>
+
+      <div class="article">
+        <h3><a href="https://medium.com/data-and-beyond/you-are-probably-using-the-wrong-clustering-algorithm-338512ee2cc6">You Are Probably Using the Wrong Clustering Algorithm</a></h3>
+        <div class="source">Dima Shulga · Medium (Data and Beyond)</div>
+        <p>The companion essay to <code>clustering_arena</code>. The argument: k-means is fast and explainable, but on most real datasets it confidently assigns points to clusters that contradict the actual structure — and with no noise label, you don't see the failure.</p>
       </div>
 
       <h2>Podcast · Learning from Machine Learning</h2>

@@ -74,6 +74,17 @@
         font-size: 0.82rem;
         opacity: 0.85;
       }
+      .tool .reading {
+        display: block;
+        margin-top: 0.3rem;
+        color: var(--fg);
+        font-size: 0.82rem;
+        opacity: 0.85;
+      }
+      .tool .reading::before {
+        content: "Further reading: ";
+        color: var(--muted);
+      }
       .pipeline-map {
         background: var(--card);
         border: 1px solid var(--border);
@@ -139,6 +150,7 @@
           <h3><a href="https://umap-learn.readthedocs.io/">UMAP</a><span class="role">Manifold</span></h3>
           <p>Leland McInnes's uniform manifold approximation. Two outputs from the same fit: 5-D for the clusterer to breathe in, 2-D for the maps.</p>
           <span class="used">Used in: all three notebooks, <code>scripts/render_animations.py</code> (the <code>n_neighbors</code> / <code>min_dist</code> sweeps)</span>
+          <span class="reading"><a href="https://arxiv.org/abs/1802.03426">paper (McInnes et al. 2018)</a> · <a href="https://github.com/lmcinnes/umap">source</a></span>
         </div>
       </div>
 
@@ -148,11 +160,13 @@
           <h3><a href="https://hdbscan.readthedocs.io/">HDBSCAN</a><span class="role">Density</span></h3>
           <p>Hierarchical density-based clustering. No <em>k</em>, noise labelled <code>-1</code> by design — the whole reason The Good works.</p>
           <span class="used">Used in: <code>01_the_good.ipynb</code>, transitively through BERTopic</span>
+          <span class="reading"><a href="https://link.springer.com/chapter/10.1007/978-3-642-37456-2_14">original paper (Campello et al. 2013)</a> · <a href="https://github.com/scikit-learn-contrib/hdbscan">source</a></span>
         </div>
         <div class="tool">
           <h3><a href="https://github.com/TutteInstitute/evoc">EVoC</a><span class="role">Density-tree</span></h3>
           <p>Embedding Vector Clustering — newer density-tree clusterer from the McInnes lab. Builds its own nearest-neighbor graph; used on poster embeddings in The Beautiful.</p>
           <span class="used">Used in: <code>03_the_beautiful.ipynb</code></span>
+          <span class="reading"><a href="https://github.com/TutteInstitute/evoc">source &amp; examples</a> · <a href="https://github.com/TutteInstitute">Tutte Institute</a> (same lab as UMAP &amp; HDBSCAN)</span>
         </div>
         <div class="tool">
           <h3><a href="https://scikit-learn.org/">scikit-learn</a><span class="role">Baselines</span></h3>
@@ -167,6 +181,7 @@
           <h3><a href="https://maartengr.github.io/BERTopic/">BERTopic</a><span class="role">Topics</span></h3>
           <p>Maarten Grootendorst's topic-modeling framework — wraps UMAP + HDBSCAN + c-TF-IDF into one pipeline. The "before LLMs" labels (<code>0_planet_earth_space_alien</code>) come from here.</p>
           <span class="used">Used in: <code>01_the_good.ipynb</code>, <code>scripts/label_hierarchy.py</code>, <code>scripts/bertopic_visuals.py</code>, <code>scripts/topics_over_time.py</code></span>
+          <span class="reading"><a href="https://arxiv.org/abs/2203.05794">paper (Grootendorst 2022)</a> · <a href="https://github.com/MaartenGr/BERTopic">source</a></span>
         </div>
         <div class="tool">
           <h3><a href="https://docs.claude.com/">Claude (Anthropic)</a><span class="role">LLM labels</span></h3>
